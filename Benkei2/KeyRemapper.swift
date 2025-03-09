@@ -7,18 +7,21 @@ class KeyRemapper {
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
     var isEnabled: Bool = true
+    private var ng: Naginata
 
-    // Sample key mappings: change these as needed.
-    let englishMapping: [CGKeyCode: CGKeyCode] = [
-        // map 'A' (key code 0) to 'B' (key code 11)
-        0: 11
+    // Updated key mapping dictionaries using kVK_ANSI_* constants with explicit casting
+    let englishMapping: [Int: Int] = [
+        // map kVK_ANSI_A to kVK_ANSI_B
+        kVK_ANSI_A: kVK_ANSI_B
     ]
-    let japaneseMapping: [CGKeyCode: CGKeyCode] = [
-        // map 'A' (key code 0) to 'C' (key code 8)
-        0: 8
+    let japaneseMapping: [Int: Int] = [
+        // map kVK_ANSI_A to kVK_ANSI_C
+        kVK_ANSI_A: kVK_ANSI_C
     ]
 
-    private init() {}
+    private init() {
+        ng = Naginata()
+    }
 
     func start() {
         guard eventTap == nil else { return }
@@ -59,7 +62,7 @@ class KeyRemapper {
             let originalKeyCode = event.getIntegerValueField(.keyboardEventKeycode)
             let mode = getCurrentInputMode()
             let mapping = (mode == "en") ? englishMapping : japaneseMapping
-            if let newKeyCode = mapping[CGKeyCode(originalKeyCode)] {
+            if let newKeyCode = mapping[Int(originalKeyCode)] {
                 event.setIntegerValueField(.keyboardEventKeycode, value: Int64(newKeyCode))
             }
         }
