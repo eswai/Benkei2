@@ -7,7 +7,6 @@ class KeyRemapper {
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
     var isEnabled: Bool = true
-    private var ng: Naginata
     private var isSimulatingKeys: Bool = false  // 再帰的なリマップを防ぐ
 
     // Updated key mapping dictionaries using kVK_ANSI_* constants with explicit casting
@@ -21,9 +20,7 @@ class KeyRemapper {
         kVK_ANSI_A: [kVK_ANSI_K, kVK_ANSI_I]
     ]
 
-    private init() {
-        ng = Naginata()
-    }
+    private init() {}
 
     func start() {
         guard eventTap == nil else { return }
