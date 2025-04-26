@@ -7,7 +7,7 @@ class KeyRemapper {
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
     var isEnabled: Bool = true
-    private var isSimulatingKeys: Bool = false  // 再帰的なリマップを防ぐ
+    private var ng: Naginata
 
     // Updated key mapping dictionaries using kVK_ANSI_* constants with explicit casting
     let englishMapping: [Int: [Int]] = [
@@ -16,11 +16,10 @@ class KeyRemapper {
         // one-to-many mapping
         kVK_ANSI_S: [kVK_ANSI_D, kVK_ANSI_F]
     ]
-    let japaneseMapping: [Int: [Int]] = [
-        kVK_ANSI_A: [kVK_ANSI_K, kVK_ANSI_I]
-    ]
 
-    private init() {}
+    private init() {
+        ng = Naginata()
+    }
 
     func start() {
         guard eventTap == nil else { return }
@@ -57,29 +56,55 @@ class KeyRemapper {
 
     func handle(event: CGEvent, type: CGEventType) -> Unmanaged<CGEvent>? {
         guard isEnabled else { return Unmanaged.passRetained(event) }
+
+        if event.getIntegerValueField(.eventSourceUserData) == 1 {
+            return Unmanaged.passRetained(event) // 自前イベントなのでスルー
+        }
+        
         if type == .keyDown || type == .keyUp {
             let originalKeyCode = Int(event.getIntegerValueField(.keyboardEventKeycode))
             let mode = getCurrentInputMode()
-            let mapping = (mode == "en") ? englishMapping : japaneseMapping
-            
-            if let targetKeys = mapping[originalKeyCode] {
-                if targetKeys.count == 1 {
-                    // 1対1のマッピング
-                    event.setIntegerValueField(.keyboardEventKeycode, value: Int64(targetKeys[0]))
-                    return Unmanaged.passRetained(event)
-                } else if targetKeys.count >= 2 && !isSimulatingKeys && type == .keyDown {
-                    // 1対多のマッピング（キーダウン時のみ処理）
-                    isSimulatingKeys = true
+
+            if mode == "en" {
+                if let targetKeys = englishMapping[originalKeyCode] {
+                    if targetKeys.count == 1 {
+                        // 1対1のマッピング
+                        event.setIntegerValueField(.keyboardEventKeycode, value: Int64(targetKeys[0]))
+                        return Unmanaged.passRetained(event)
+                    } else if targetKeys.count >= 2 && type == .keyDown {
+                        // 1対多のマッピング（キーダウン時のみ処理）
+                        for key in targetKeys {
+                            if let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: true),
+                            let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: false) {
+                                keyDown.setIntegerValueField(.eventSourceUserData, value: 1)
+                                keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
+                                keyDown.post(tap: .cgSessionEventTap)
+                                keyUp.post(tap: .cgSessionEventTap)
+                            }
+                        }
+                        return nil // 元のイベントを抑制
+                    }
+                }
+            } else {
+                var targetKeys: [Int] = []
+                if type == .keyDown {
+                    targetKeys = ng.ngPress(kc: originalKeyCode)
+                } else {
+                    targetKeys = ng.ngRelease(kc: originalKeyCode)
+                }
+                print("originalKey: \(originalKeyCode) type: \(type) targetKeys: \(targetKeys)")
+                if targetKeys.count > 0 {
                     for key in targetKeys {
                         if let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: true),
-                           let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: false) {
+                        let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: false) {
+                            keyDown.setIntegerValueField(.eventSourceUserData, value: 1)
+                            keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
                             keyDown.post(tap: .cgSessionEventTap)
                             keyUp.post(tap: .cgSessionEventTap)
                         }
                     }
-                    isSimulatingKeys = false
-                    return nil // 元のイベントを抑制
                 }
+                return nil // 元のイベントを抑制
             }
         }
         return Unmanaged.passRetained(event)

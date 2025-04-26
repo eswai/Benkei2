@@ -27,6 +27,7 @@
 		5286B1AB2D7D6E6900AE412C /* Benkei2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Benkei2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5286B1BC2D7D6E6C00AE412C /* Benkei2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Benkei2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5286B1C62D7D6E6C00AE412C /* Benkei2UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Benkei2UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		52B63C8F2DBD88C600DA666D /* Benkei2.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Benkei2.xctestplan; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -75,6 +76,7 @@
 		5286B1A22D7D6E6900AE412C = {
 			isa = PBXGroup;
 			children = (
+				52B63C8F2DBD88C600DA666D /* Benkei2.xctestplan */,
 				5286B1AD2D7D6E6900AE412C /* Benkei2 */,
 				5286B1BF2D7D6E6C00AE412C /* Benkei2Tests */,
 				5286B1C92D7D6E6C00AE412C /* Benkei2UITests */,

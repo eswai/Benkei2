@@ -1,0 +1,38 @@
+{
+  "configurations" : [
+    {
+      "id" : "D538403B-2E0A-497F-A77C-59BE1FA41DA8",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:Benkei2.xcodeproj",
+      "identifier" : "5286B1AA2D7D6E6900AE412C",
+      "name" : "Benkei2"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Benkei2.xcodeproj",
+        "identifier" : "5286B1BB2D7D6E6C00AE412C",
+        "name" : "Benkei2Tests"
+      }
+    },
+    {
+      "enabled" : false,
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:Benkei2.xcodeproj",
+        "identifier" : "5286B1C52D7D6E6C00AE412C",
+        "name" : "Benkei2UITests"
+      }
+    }
+  ],
+  "version" : 1
+}
