@@ -8,13 +8,14 @@ class KeyRemapper {
     private var runLoopSource: CFRunLoopSource?
     var isEnabled: Bool = true
     private var ng: Naginata
-
+    private var pressedKeys: Set<Int> = []
+    
     // Updated key mapping dictionaries using kVK_ANSI_* constants with explicit casting
     let englishMapping: [Int: [Int]] = [
         // one-to-one mapping
         kVK_ANSI_A: [kVK_ANSI_B],
         // one-to-many mapping
-        kVK_ANSI_S: [kVK_ANSI_D, kVK_ANSI_F]
+        // kVK_ANSI_S: [kVK_ANSI_D, kVK_ANSI_F]
     ]
 
     private init() {
@@ -51,62 +52,61 @@ class KeyRemapper {
         let sourceID = TISGetInputSourceProperty(inputSource, kTISPropertyInputSourceID)
         let sourceIDString = Unmanaged<CFString>.fromOpaque(sourceID!).takeUnretainedValue() as String
         
-        return sourceIDString.contains("com.apple.inputmethod.Kotoeri.RomajiTyping.Japanese") ? "jp" : "en"
+        return sourceIDString.contains("com.apple.inputmethod.Kotoeri.RomajiTyping.Japanese") ? "ja" : "en"
     }
 
     func handle(event: CGEvent, type: CGEventType) -> Unmanaged<CGEvent>? {
         guard isEnabled else { return Unmanaged.passRetained(event) }
 
         if event.getIntegerValueField(.eventSourceUserData) == 1 {
-            return Unmanaged.passRetained(event) // 自前イベントなのでスルー
+            return Unmanaged.passRetained(event)
         }
-        
-        if type == .keyDown || type == .keyUp {
-            let originalKeyCode = Int(event.getIntegerValueField(.keyboardEventKeycode))
-            let mode = getCurrentInputMode()
 
-            if mode == "en" {
-                if let targetKeys = englishMapping[originalKeyCode] {
-                    if targetKeys.count == 1 {
-                        // 1対1のマッピング
-                        event.setIntegerValueField(.keyboardEventKeycode, value: Int64(targetKeys[0]))
-                        return Unmanaged.passRetained(event)
-                    } else if targetKeys.count >= 2 && type == .keyDown {
-                        // 1対多のマッピング（キーダウン時のみ処理）
-                        for key in targetKeys {
-                            if let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: true),
-                            let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: false) {
-                                keyDown.setIntegerValueField(.eventSourceUserData, value: 1)
-                                keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
-                                keyDown.post(tap: .cgSessionEventTap)
-                                keyUp.post(tap: .cgSessionEventTap)
-                            }
-                        }
-                        return nil // 元のイベントを抑制
-                    }
+        let mode = getCurrentInputMode()
+        let originalKeyCode = Int(event.getIntegerValueField(.keyboardEventKeycode))
+
+        if mode == "en" && (type == .keyDown || type == .keyUp) {
+            if let targetKeys = englishMapping[originalKeyCode] {
+                if targetKeys.count == 1 {
+                    event.setIntegerValueField(.keyboardEventKeycode, value: Int64(targetKeys[0]))
+                    return Unmanaged.passRetained(event)
+                } else if targetKeys.count >= 2 {
+                    handleTargetKeys(targetKeys)
+                    return nil
                 }
-            } else {
-                var targetKeys: [Int] = []
-                if type == .keyDown {
-                    targetKeys = ng.ngPress(kc: originalKeyCode)
-                } else {
-                    targetKeys = ng.ngRelease(kc: originalKeyCode)
-                }
-                print("originalKey: \(originalKeyCode) type: \(type) targetKeys: \(targetKeys)")
-                if targetKeys.count > 0 {
-                    for key in targetKeys {
-                        if let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: true),
-                        let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: false) {
-                            keyDown.setIntegerValueField(.eventSourceUserData, value: 1)
-                            keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
-                            keyDown.post(tap: .cgSessionEventTap)
-                            keyUp.post(tap: .cgSessionEventTap)
-                        }
-                    }
-                }
-                return nil // 元のイベントを抑制
             }
         }
+        
+        if mode == "ja" && (type == .keyDown || type == .keyUp) {
+            // キーアップの場合は、pressedKeysから削除
+            if type == .keyUp {
+                pressedKeys.remove(originalKeyCode)
+                let targetKeys = ng.ngRelease(kc: originalKeyCode)
+                handleTargetKeys(targetKeys)
+            }
+            
+            // キーダウンの場合は、まだ押されていないキーのみ処理
+            if type == .keyDown && !pressedKeys.contains(originalKeyCode) {
+                pressedKeys.insert(originalKeyCode)                
+                let targetKeys = ng.ngPress(kc: originalKeyCode)
+                handleTargetKeys(targetKeys)
+            }
+
+            return nil
+        }
+
         return Unmanaged.passRetained(event)
+    }
+
+    private func handleTargetKeys(_ targetKeys: [Int]) {
+        for key in targetKeys {
+            if let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: true),
+               let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: false) {
+                keyDown.setIntegerValueField(.eventSourceUserData, value: 1)
+                keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
+                keyDown.post(tap: .cgSessionEventTap)
+                keyUp.post(tap: .cgSessionEventTap)
+            }
+        }
     }
 }
