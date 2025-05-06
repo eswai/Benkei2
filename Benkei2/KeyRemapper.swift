@@ -19,7 +19,8 @@ class KeyRemapper {
     ]
 
     private init() {
-        ng = Naginata()
+        let yamlPath = Bundle.main.path(forResource: "Naginata", ofType: "yaml")!
+        ng = Naginata(filePath: yamlPath)!
     }
 
     func start() {

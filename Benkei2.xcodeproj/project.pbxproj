@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		520B32282DC9DB9500AD6FE2 /* Yams in Frameworks */ = {isa = PBXBuildFile; productRef = 520B32272DC9DB9500AD6FE2 /* Yams */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		5286B1BD2D7D6E6C00AE412C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -53,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				520B32282DC9DB9500AD6FE2 /* Yams in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,6 +119,7 @@
 			);
 			name = Benkei2;
 			packageProductDependencies = (
+				520B32272DC9DB9500AD6FE2 /* Yams */,
 			);
 			productName = Benkei2;
 			productReference = 5286B1AB2D7D6E6900AE412C /* Benkei2.app */;
@@ -197,6 +203,9 @@
 			);
 			mainGroup = 5286B1A22D7D6E6900AE412C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				520B32242DC9D7E500AD6FE2 /* XCRemoteSwiftPackageReference "Yams" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5286B1AC2D7D6E6900AE412C /* Products */;
 			projectDirPath = "";
@@ -545,6 +554,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		520B32242DC9D7E500AD6FE2 /* XCRemoteSwiftPackageReference "Yams" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jpsim/Yams.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.3.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		520B32272DC9DB9500AD6FE2 /* Yams */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 520B32242DC9D7E500AD6FE2 /* XCRemoteSwiftPackageReference "Yams" */;
+			productName = Yams;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 5286B1A32D7D6E6900AE412C /* Project object */;
 }
