@@ -51,6 +51,10 @@ class Naginata {
         self.NGDIC = dictionary
     }
 
+    func isNaginata(kc: Int) -> Bool {
+        return NG_KEYCODE.contains(kc)
+    }
+
     func ngPress(kc: Int) -> [Int] {
         pressedKeys.insert(kc)
 

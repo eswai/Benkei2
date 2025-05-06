@@ -78,12 +78,13 @@ class KeyRemapper {
             }
         }
         
-        if mode == "ja" && (type == .keyDown || type == .keyUp) {
+        if mode == "ja" && (type == .keyDown || type == .keyUp) && ng.isNaginata(kc: originalKeyCode) {
             // キーアップの場合は、pressedKeysから削除
             if type == .keyUp {
                 pressedKeys.remove(originalKeyCode)
                 let targetKeys = ng.ngRelease(kc: originalKeyCode)
                 handleTargetKeys(targetKeys)
+                return nil
             }
             
             // キーダウンの場合は、まだ押されていないキーのみ処理
@@ -91,9 +92,8 @@ class KeyRemapper {
                 pressedKeys.insert(originalKeyCode)                
                 let targetKeys = ng.ngPress(kc: originalKeyCode)
                 handleTargetKeys(targetKeys)
+                return nil
             }
-
-            return nil
         }
 
         return Unmanaged.passRetained(event)
