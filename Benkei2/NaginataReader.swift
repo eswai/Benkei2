@@ -5,7 +5,7 @@ import Yams
 struct NaginataCommand: Decodable {
     let mae: [Int]
     let douji: [Int]
-    let type: [[String: [Int]]]
+    let type: [[String: String]]
     
     private enum CodingKeys: String, CodingKey {
         case mae, douji, type
@@ -23,12 +23,7 @@ struct NaginataCommand: Decodable {
         self.douji = doujiStrings.compactMap { NaginataReader.keyCodeMap[$0] }
         
         // typeの変換処理を追加
-        let rawType = try container.decode([[String: [String]]].self, forKey: .type)
-        self.type = rawType.map { dict in
-            dict.mapValues { stringArray in
-                stringArray.compactMap { NaginataReader.keyCodeMap[$0] }
-            }
-        }
+        self.type = try container.decode([[String: String]].self, forKey: .type)
     }
 }
 

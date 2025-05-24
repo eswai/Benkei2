@@ -10,7 +10,7 @@ class Naginata {
         kVK_Space, kVK_Return
     ]
 
-    let NGDIC: [([Int], [Int], [Int])]
+    let NGDIC: [([Int], [Int], [[String: String]])]
 
     let NGSHIFT1: [[Int]] = [
         [kVK_Space], [kVK_Return], [kVK_ANSI_D, kVK_ANSI_F], [kVK_ANSI_C, kVK_ANSI_V], [kVK_ANSI_J, kVK_ANSI_K], [kVK_ANSI_M, kVK_ANSI_Comma]
@@ -35,17 +35,14 @@ class Naginata {
         }
         
         // コマンドから変換辞書を構築
-        var dictionary: [([Int], [Int], [Int])] = []
+        var dictionary: [([Int], [Int], [[String: String]])] = []
         
         for command in commands {
             let mae = command.mae
             let douji = command.douji
+            let type = command.type
             
-            for typeEntry in command.type {
-                for (_, outputKeys) in typeEntry {
-                    dictionary.append((mae, douji, outputKeys))
-                }
-            }
+            dictionary.append((mae, douji, type))
         }
         
         self.NGDIC = dictionary
@@ -55,7 +52,7 @@ class Naginata {
         return NG_KEYCODE.contains(kc)
     }
 
-    func ngPress(kc: Int) -> [Int] {
+    func ngPress(kc: Int) -> [[String: String]] {
         pressedKeys.insert(kc)
 
         // 後置シフトはしない
@@ -95,11 +92,11 @@ class Naginata {
         return []
     }
 
-    func ngRelease(kc: Int) -> [Int] {
+    func ngRelease(kc: Int) -> [[String: String]] {
         pressedKeys.remove(kc)
 
         // 全部キーを離したらバッファを全部吐き出す
-        var r: [Int] = []
+        var r: [[String: String]] = []
         if pressedKeys.count == 0 {
             while nginput.count > 0 {
                 r.append(contentsOf: ngType(keys: nginput.removeFirst()))
@@ -114,11 +111,11 @@ class Naginata {
         return r
     }
 
-    func ngType(keys: [Int]) -> [Int] {
+    func ngType(keys: [Int]) -> [[String: String]] {
         guard !keys.isEmpty else { return [] }
 
         if keys.count == 1 && keys[0] == kVK_Return {
-            return [kVK_Return]
+            return [["tap": "Return"]]
         }
 
         let skc = Set(keys.map { $0 == kVK_Return ? kVK_Space : $0 })

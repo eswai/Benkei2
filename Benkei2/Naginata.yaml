@@ -1,648 +1,887 @@
 - mae: []
   douji: [U]
   type:
-    - tap: [Delete]
+    - tap: Delete
 - mae: []
   douji: [T]
   type:
-    - tap: [LeftArrow]
+    - tap: LeftArrow
 - mae: []
   douji: [Y]
   type:
-    - tap: [RightArrow]
+    - tap: RightArrow
 - mae: []
   douji: [J]
   type:
-    - tap: [A]
+    - tap: A
 - mae: []
   douji: [K]
   type:
-    - tap: [I]
+    - tap: I
 - mae: []
   douji: [L]
   type:
-    - tap: [U]
+    - tap: U
 - mae: [Shift]
   douji: [O]
   type:
-    - tap: [E]
+    - tap: E
 - mae: [Shift]
   douji: [N]
   type:
-    - tap: [O]
+    - tap: O
 - mae: []
   douji: [F]
   type:
-    - tap: [K, A]
+    - tap: K
+    - tap: A
 - mae: []
   douji: [W]
   type:
-    - tap: [K, I]
+    - tap: K
+    - tap: I
 - mae: []
   douji: [H]
   type:
-    - tap: [K, U]
+    - tap: K
+    - tap: U
 - mae: []
   douji: [S]
   type:
-    - tap: [K, E]
+    - tap: K
+    - tap: E
 - mae: []
   douji: [V]
   type:
-    - tap: [K, O]
+    - tap: K
+    - tap: O
 - mae: [Shift]
   douji: [U]
   type:
-    - tap: [S, A]
+    - tap: S
+    - tap: A
 - mae: []
   douji: [R]
   type:
-    - tap: [S, I]
+    - tap: S
+    - tap: I
 - mae: []
   douji: [O]
   type:
-    - tap: [S, U]
+    - tap: S
+    - tap: U
 - mae: [Shift]
   douji: [A]
   type:
-    - tap: [S, E]
+    - tap: S
+    - tap: E
 - mae: []
   douji: [B]
   type:
-    - tap: [S, O]
+    - tap: S
+    - tap: O
 - mae: []
   douji: [N]
   type:
-    - tap: [T, A]
+    - tap: T
+    - tap: A
 - mae: [Shift]
   douji: [G]
   type:
-    - tap: [T, I]
+    - tap: T
+    - tap: I
 - mae: [Shift]
   douji: [L]
   type:
-    - tap: [T, U]
+    - tap: T
+    - tap: U
 - mae: []
   douji: [E]
   type:
-    - tap: [T, E]
+    - tap: T
+    - tap: E
 - mae: []
   douji: [D]
   type:
-    - tap: [T, O]
+    - tap: T
+    - tap: O
 - mae: []
   douji: [M]
   type:
-    - tap: [N, A]
+    - tap: N
+    - tap: A
 - mae: [Shift]
   douji: [D]
   type:
-    - tap: [N, I]
+    - tap: N
+    - tap: I
 - mae: [Shift]
   douji: [W]
   type:
-    - tap: [N, U]
+    - tap: N
+    - tap: U
 - mae: [Shift]
   douji: [Comma]
   type:
-    - tap: [N, E]
+    - tap: N
+    - tap: E
 - mae: [Shift]
   douji: [J]
   type:
-    - tap: [N, O]
+    - tap: N
+    - tap: O
 - mae: []
   douji: [C]
   type:
-    - tap: [H, A]
+    - tap: H
+    - tap: A
 - mae: []
   douji: [X]
   type:
-    - tap: [H, I]
+    - tap: H
+    - tap: I
 - mae: [Shift]
   douji: [X]
   type:
-    - tap: [H, I]
+    - tap: H
+    - tap: I
 - mae: [Shift]
   douji: [Semicolon]
   type:
-    - tap: [H, U]
+    - tap: H
+    - tap: U
 - mae: []
   douji: [P]
   type:
-    - tap: [H, E]
+    - tap: H
+    - tap: E
 - mae: []
   douji: [Z]
   type:
-    - tap: [H, O]
+    - tap: H
+    - tap: O
 - mae: [Shift]
   douji: [Z]
   type:
-    - tap: [H, O]
+    - tap: H
+    - tap: O
 - mae: [Shift]
   douji: [F]
   type:
-    - tap: [M, A]
+    - tap: M
+    - tap: A
 - mae: [Shift]
   douji: [S]
   type:
-    - tap: [M, I]
+    - tap: M
+    - tap: I
 - mae: [Shift]
   douji: [B]
   type:
-    - tap: [M, U]
+    - tap: M
+    - tap: U
 - mae: [Shift]
   douji: [R]
   type:
-    - tap: [M, E]
+    - tap: M
+    - tap: E
 - mae: [Shift]
   douji: [K]
   type:
-    - tap: [M, O]
+    - tap: M
+    - tap: O
 - mae: [Shift]
   douji: [H]
   type:
-    - tap: [Y, A]
+    - tap: Y
+    - tap: A
 - mae: [Shift]
   douji: [P]
   type:
-    - tap: [Y, U]
+    - tap: Y
+    - tap: U
 - mae: [Shift]
   douji: [I]
   type:
-    - tap: [Y, O]
+    - tap: Y
+    - tap: O
 - mae: []
   douji: [Period]
   type:
-    - tap: [R, A]
+    - tap: R
+    - tap: A
 - mae: [Shift]
   douji: [E]
   type:
-    - tap: [R, I]
+    - tap: R
+    - tap: I
 - mae: []
   douji: [I]
   type:
-    - tap: [R, U]
+    - tap: R
+    - tap: U
 - mae: []
   douji: [Slash]
   type:
-    - tap: [R, E]
+    - tap: R
+    - tap: E
 - mae: [Shift]
   douji: [Slash]
   type:
-    - tap: [R, E]
+    - tap: R
+    - tap: E
 - mae: []
   douji: [A]
   type:
-    - tap: [R, O]
+    - tap: R
+    - tap: O
 - mae: [Shift]
   douji: [Period]
   type:
-    - tap: [W, A]
+    - tap: W
+    - tap: A
 - mae: [Shift]
   douji: [C]
   type:
-    - tap: [W, O]
+    - tap: W
+    - tap: O
 - mae: []
   douji: [Comma]
   type:
-    - tap: [N, N]
+    - tap: N
+    - tap: N
 - mae: []
   douji: [Semicolon]
   type:
-    - tap: [Minus]
+    - tap: Minus
 - mae: []
   douji: [J, F]
   type:
-    - tap: [G, A]
+    - tap: G
+    - tap: A
 - mae: []
   douji: [J, W]
   type:
-    - tap: [G, I]
+    - tap: G
+    - tap: I
 - mae: []
   douji: [F, H]
   type:
-    - tap: [G, U]
+    - tap: G
+    - tap: U
 - mae: []
   douji: [J, S]
   type:
-    - tap: [G, E]
+    - tap: G
+    - tap: E
 - mae: []
   douji: [J, V]
   type:
-    - tap: [G, O]
+    - tap: G
+    - tap: O
 - mae: []
   douji: [F, U]
   type:
-    - tap: [Z, A]
+    - tap: Z
+    - tap: A
 - mae: []
   douji: [J, R]
   type:
-    - tap: [Z, I]
+    - tap: Z
+    - tap: I
 - mae: []
   douji: [F, O]
   type:
-    - tap: [Z, U]
+    - tap: Z
+    - tap: U
 - mae: []
   douji: [J, A]
   type:
-    - tap: [Z, E]
+    - tap: Z
+    - tap: E
 - mae: []
   douji: [J, B]
   type:
-    - tap: [Z, O]
+    - tap: Z
+    - tap: O
 - mae: []
   douji: [F, N]
   type:
-    - tap: [D, A]
+    - tap: D
+    - tap: A
 - mae: []
   douji: [J, G]
   type:
-    - tap: [D, I]
+    - tap: D
+    - tap: I
 - mae: []
   douji: [F, L]
   type:
-    - tap: [D, U]
+    - tap: D
+    - tap: U
 - mae: []
   douji: [J, E]
   type:
-    - tap: [D, E]
+    - tap: D
+    - tap: E
 - mae: []
   douji: [J, D]
   type:
-    - tap: [D, O]
+    - tap: D
+    - tap: O
 - mae: []
   douji: [J, C]
   type:
-    - tap: [B, A]
+    - tap: B
+    - tap: A
 - mae: []
   douji: [J, X]
   type:
-    - tap: [B, I]
+    - tap: B
+    - tap: I
 - mae: []
   douji: [F, Semicolon]
   type:
-    - tap: [B, U]
+    - tap: B
+    - tap: U
 - mae: []
   douji: [F, P]
   type:
-    - tap: [B, E]
+    - tap: B
+    - tap: E
 - mae: []
   douji: [J, Z]
   type:
-    - tap: [B, O]
+    - tap: B
+    - tap: O
 - mae: []
   douji: [F, L, Semicolon]
   type:
-    - tap: [V, U]
+    - tap: V
+    - tap: U
 - mae: []
   douji: [M, C]
   type:
-    - tap: [P, A]
+    - tap: P
+    - tap: A
 - mae: []
   douji: [M, X]
   type:
-    - tap: [P, I]
+    - tap: P
+    - tap: I
 - mae: []
   douji: [V, Semicolon]
   type:
-    - tap: [P, U]
+    - tap: P
+    - tap: U
 - mae: []
   douji: [V, P]
   type:
-    - tap: [P, E]
+    - tap: P
+    - tap: E
 - mae: []
   douji: [M, Z]
   type:
-    - tap: [P, O]
+    - tap: P
+    - tap: O
 - mae: []
   douji: [Q, H]
   type:
-    - tap: [X, Y, A]
+    - tap: X
+    - tap: Y
+    - tap: A
 - mae: []
   douji: [Q, P]
   type:
-    - tap: [X, Y, U]
+    - tap: X
+    - tap: Y
+    - tap: U
 - mae: []
   douji: [Q, I]
   type:
-    - tap: [X, Y, O]
+    - tap: X
+    - tap: Y
+    - tap: O
 - mae: []
   douji: [Q, J]
   type:
-    - tap: [X, A]
+    - tap: X
+    - tap: A
 - mae: []
   douji: [Q, K]
   type:
-    - tap: [X, I]
+    - tap: X
+    - tap: I
 - mae: []
   douji: [Q, L]
   type:
-    - tap: [X, U]
+    - tap: X
+    - tap: U
 - mae: []
   douji: [Q, O]
   type:
-    - tap: [X, E]
+    - tap: X
+    - tap: E
 - mae: []
   douji: [Q, N]
   type:
-    - tap: [X, O]
+    - tap: X
+    - tap: O
 - mae: []
   douji: [Q, Period]
   type:
-    - tap: [X, W, A]
+    - tap: X
+    - tap: W
+    - tap: A
 - mae: []
   douji: [G]
   type:
-    - tap: [X, T, U]
+    - tap: X
+    - tap: T
+    - tap: U
 - mae: []
   douji: [Q, S]
   type:
-    - tap: [X, K, E]
+    - tap: X
+    - tap: K
+    - tap: E
 - mae: []
   douji: [Q, F]
   type:
-    - tap: [X, K, A]
+    - tap: X
+    - tap: K
+    - tap: A
 - mae: []
   douji: [R, H]
   type:
-    - tap: [S, Y, A]
+    - tap: S
+    - tap: Y
+    - tap: A
 - mae: []
   douji: [R, P]
   type:
-    - tap: [S, Y, U]
+    - tap: S
+    - tap: Y
+    - tap: U
 - mae: []
   douji: [R, I]
   type:
-    - tap: [S, Y, O]
+    - tap: S
+    - tap: Y
+    - tap: O
 - mae: []
   douji: [J, R, H]
   type:
-    - tap: [Z, Y, A]
+    - tap: Z
+    - tap: Y
+    - tap: A
 - mae: []
   douji: [J, R, P]
   type:
-    - tap: [Z, Y, U]
+    - tap: Z
+    - tap: Y
+    - tap: U
 - mae: []
   douji: [J, R, I]
   type:
-    - tap: [Z, Y, O]
+    - tap: Z
+    - tap: Y
+    - tap: O
 - mae: []
   douji: [W, H]
   type:
-    - tap: [K, Y, A]
+    - tap: K
+    - tap: Y
+    - tap: A
 - mae: []
   douji: [W, P]
   type:
-    - tap: [K, Y, U]
+    - tap: K
+    - tap: Y
+    - tap: U
 - mae: []
   douji: [W, I]
   type:
-    - tap: [K, Y, O]
+    - tap: K
+    - tap: Y
+    - tap: O
 - mae: []
   douji: [J, W, H]
   type:
-    - tap: [G, Y, A]
+    - tap: G
+    - tap: Y
+    - tap: A
 - mae: []
   douji: [J, W, P]
   type:
-    - tap: [G, Y, U]
+    - tap: G
+    - tap: Y
+    - tap: U
 - mae: []
   douji: [J, W, I]
   type:
-    - tap: [G, Y, O]
+    - tap: G
+    - tap: Y
+    - tap: O
 - mae: []
   douji: [G, H]
   type:
-    - tap: [T, Y, A]
+    - tap: T
+    - tap: Y
+    - tap: A
 - mae: []
   douji: [G, P]
   type:
-    - tap: [T, Y, U]
+    - tap: T
+    - tap: Y
+    - tap: U
 - mae: []
   douji: [G, I]
   type:
-    - tap: [T, Y, O]
+    - tap: T
+    - tap: Y
+    - tap: O
 - mae: []
   douji: [J, G, H]
   type:
-    - tap: [D, Y, A]
+    - tap: D
+    - tap: Y
+    - tap: A
 - mae: []
   douji: [J, G, P]
   type:
-    - tap: [D, Y, U]
+    - tap: D
+    - tap: Y
+    - tap: U
 - mae: []
   douji: [J, G, I]
   type:
-    - tap: [D, Y, O]
+    - tap: D
+    - tap: Y
+    - tap: O
 - mae: []
   douji: [D, H]
   type:
-    - tap: [N, Y, A]
+    - tap: N
+    - tap: Y
+    - tap: A
 - mae: []
   douji: [D, P]
   type:
-    - tap: [N, Y, U]
+    - tap: N
+    - tap: Y
+    - tap: U
 - mae: []
   douji: [D, I]
   type:
-    - tap: [N, Y, O]
+    - tap: N
+    - tap: Y
+    - tap: O
 - mae: []
   douji: [X, H]
   type:
-    - tap: [H, Y, A]
+    - tap: H
+    - tap: Y
+    - tap: A
 - mae: []
   douji: [X, P]
   type:
-    - tap: [H, Y, U]
+    - tap: H
+    - tap: Y
+    - tap: U
 - mae: []
   douji: [X, I]
   type:
-    - tap: [H, Y, O]
+    - tap: H
+    - tap: Y
+    - tap: O
 - mae: []
   douji: [J, X, H]
   type:
-    - tap: [B, Y, A]
+    - tap: B
+    - tap: Y
+    - tap: A
 - mae: []
   douji: [J, X, P]
   type:
-    - tap: [B, Y, U]
+    - tap: B
+    - tap: Y
+    - tap: U
 - mae: []
   douji: [J, X, I]
   type:
-    - tap: [B, Y, O]
+    - tap: B
+    - tap: Y
+    - tap: O
 - mae: []
   douji: [M, X, H]
   type:
-    - tap: [P, Y, A]
+    - tap: P
+    - tap: Y
+    - tap: A
 - mae: []
   douji: [M, X, P]
   type:
-    - tap: [P, Y, U]
+    - tap: P
+    - tap: Y
+    - tap: U
 - mae: []
   douji: [M, X, I]
   type:
-    - tap: [P, Y, O]
+    - tap: P
+    - tap: Y
+    - tap: O
 - mae: []
   douji: [S, H]
   type:
-    - tap: [M, Y, A]
+    - tap: M
+    - tap: Y
+    - tap: A
 - mae: []
   douji: [S, P]
   type:
-    - tap: [M, Y, U]
+    - tap: M
+    - tap: Y
+    - tap: U
 - mae: []
   douji: [S, I]
   type:
-    - tap: [M, Y, O]
+    - tap: M
+    - tap: Y
+    - tap: O
 - mae: []
   douji: [E, H]
   type:
-    - tap: [R, Y, A]
+    - tap: R
+    - tap: Y
+    - tap: A
 - mae: []
   douji: [E, P]
   type:
-    - tap: [R, Y, U]
+    - tap: R
+    - tap: Y
+    - tap: U
 - mae: []
   douji: [E, I]
   type:
-    - tap: [R, Y, O]
+    - tap: R
+    - tap: Y
+    - tap: O
 - mae: []
   douji: [M, E, K]
   type:
-    - tap: [T, H, I]
+    - tap: T
+    - tap: H
+    - tap: I
 - mae: []
   douji: [M, E, P]
   type:
-    - tap: [T, E, X, Y, U]
+    - tap: T
+    - tap: E
+    - tap: X
+    - tap: Y
+    - tap: U
 - mae: []
   douji: [J, E, K]
   type:
-    - tap: [D, H, I]
+    - tap: D
+    - tap: H
+    - tap: I
 - mae: []
   douji: [J, E, P]
   type:
-    - tap: [D, H, U]
+    - tap: D
+    - tap: H
+    - tap: U
 - mae: []
   douji: [M, D, L]
   type:
-    - tap: [T, O, X, U]
+    - tap: T
+    - tap: O
+    - tap: X
+    - tap: U
 - mae: []
   douji: [J, D, L]
   type:
-    - tap: [D, O, X, U]
+    - tap: D
+    - tap: O
+    - tap: X
+    - tap: U
 - mae: []
   douji: [M, R, O]
   type:
-    - tap: [S, Y, E]
+    - tap: S
+    - tap: Y
+    - tap: E
 - mae: []
   douji: [M, G, O]
   type:
-    - tap: [T, Y, E]
+    - tap: T
+    - tap: Y
+    - tap: E
 - mae: []
   douji: [J, R, O]
   type:
-    - tap: [Z, Y, E]
+    - tap: Z
+    - tap: Y
+    - tap: E
 - mae: []
   douji: [J, G, O]
   type:
-    - tap: [D, Y, E]
+    - tap: D
+    - tap: Y
+    - tap: E
 - mae: []
   douji: [V, Semicolon, J]
   type:
-    - tap: [F, A]
+    - tap: F
+    - tap: A
 - mae: []
   douji: [V, Semicolon, K]
   type:
-    - tap: [F, I]
+    - tap: F
+    - tap: I
 - mae: []
   douji: [V, Semicolon, O]
   type:
-    - tap: [F, E]
+    - tap: F
+    - tap: E
 - mae: []
   douji: [V, Semicolon, N]
   type:
-    - tap: [F, O]
+    - tap: F
+    - tap: O
 - mae: []
   douji: [V, Semicolon, P]
   type:
-    - tap: [F, Y, U]
+    - tap: F
+    - tap: Y
+    - tap: U
 - mae: []
   douji: [V, K, O]
   type:
-    - tap: [I, X, E]
+    - tap: I
+    - tap: X
+    - tap: E
 - mae: []
   douji: [V, L, K]
   type:
-    - tap: [W, I]
+    - tap: W
+    - tap: I
 - mae: []
   douji: [V, L, O]
   type:
-    - tap: [W, E]
+    - tap: W
+    - tap: E
 - mae: []
   douji: [V, L, N]
   type:
-    - tap: [U, X, O]
+    - tap: U
+    - tap: X
+    - tap: O
 - mae: []
   douji: [F, L, J]
   type:
-    - tap: [V, A]
+    - tap: V
+    - tap: A
 - mae: []
   douji: [F, L, K]
   type:
-    - tap: [V, I]
+    - tap: V
+    - tap: I
 - mae: []
   douji: [F, L, O]
   type:
-    - tap: [V, E]
+    - tap: V
+    - tap: E
 - mae: []
   douji: [F, L, N]
   type:
-    - tap: [V, O]
+    - tap: V
+    - tap: O
 - mae: []
   douji: [F, L, P]
   type:
-    - tap: [V, U, X, Y, U]
+    - tap: V
+    - tap: U
+    - tap: X
+    - tap: Y
+    - tap: U
 - mae: []
   douji: [V, H, J]
   type:
-    - tap: [K, U, X, A]
+    - tap: K
+    - tap: U
+    - tap: X
+    - tap: A
 - mae: []
   douji: [V, H, K]
   type:
-    - tap: [K, U, X, I]
+    - tap: K
+    - tap: U
+    - tap: X
+    - tap: I
 - mae: []
   douji: [V, H, O]
   type:
-    - tap: [K, U, X, E]
+    - tap: K
+    - tap: U
+    - tap: X
+    - tap: E
 - mae: []
   douji: [V, H, N]
   type:
-    - tap: [K, U, X, O]
+    - tap: K
+    - tap: U
+    - tap: X
+    - tap: O
 - mae: []
   douji: [V, H, Period]
   type:
-    - tap: [K, U, X, W, A]
+    - tap: K
+    - tap: U
+    - tap: X
+    - tap: W
+    - tap: A
 - mae: []
   douji: [F, H, J]
   type:
-    - tap: [G, U, X, A]
+    - tap: G
+    - tap: U
+    - tap: X
+    - tap: A
 - mae: []
   douji: [F, H, K]
   type:
-    - tap: [G, U, X, I]
+    - tap: G
+    - tap: U
+    - tap: X
+    - tap: I
 - mae: []
   douji: [F, H, O]
   type:
-    - tap: [G, U, X, E]
+    - tap: G
+    - tap: U
+    - tap: X
+    - tap: E
 - mae: []
   douji: [F, H, N]
   type:
-    - tap: [G, U, X, O]
+    - tap: G
+    - tap: U
+    - tap: X
+    - tap: O
 - mae: []
   douji: [F, H, Period]
   type:
-    - tap: [G, U, X, W, A]
+    - tap: G
+    - tap: U
+    - tap: X
+    - tap: W
+    - tap: A
 - mae: []
   douji: [V, L, J]
   type:
-    - tap: [T, S, A]
+    - tap: T
+    - tap: S
+    - tap: A

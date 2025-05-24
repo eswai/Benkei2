@@ -67,15 +67,15 @@ class KeyRemapper {
         let originalKeyCode = Int(event.getIntegerValueField(.keyboardEventKeycode))
 
         if mode == "en" && (type == .keyDown || type == .keyUp) {
-            if let targetKeys = englishMapping[originalKeyCode] {
-                if targetKeys.count == 1 {
-                    event.setIntegerValueField(.keyboardEventKeycode, value: Int64(targetKeys[0]))
-                    return Unmanaged.passRetained(event)
-                } else if targetKeys.count >= 2 {
-                    handleTargetKeys(targetKeys)
-                    return nil
-                }
-            }
+//            if let targetKeys = englishMapping[originalKeyCode] {
+//                if targetKeys.count == 1 {
+//                    event.setIntegerValueField(.keyboardEventKeycode, value: Int64(targetKeys[0]))
+//                    return Unmanaged.passRetained(event)
+//                } else if targetKeys.count >= 2 {
+//                    handleTargetKeys(targetKeys)
+//                    return nil
+//                }
+//            }
         }
         
         if mode == "ja" && (type == .keyDown || type == .keyUp) && ng.isNaginata(kc: originalKeyCode) {
@@ -99,15 +99,36 @@ class KeyRemapper {
         return Unmanaged.passRetained(event)
     }
 
-    private func handleTargetKeys(_ targetKeys: [Int]) {
-        for key in targetKeys {
-            if let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: true),
-               let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: false) {
-                keyDown.setIntegerValueField(.eventSourceUserData, value: 1)
-                keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
-                keyDown.post(tap: .cgSessionEventTap)
-                keyUp.post(tap: .cgSessionEventTap)
+    private func handleTargetKeys(_ targetKeys: [[String: String]]) {
+        for action in targetKeys {
+            for (mode, value) in action {
+                switch mode {
+                case "tap":
+                    if let key = NaginataReader.keyCodeMap[value],
+                       let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: true),
+                       let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: false) {
+                        keyDown.setIntegerValueField(.eventSourceUserData, value: 1)
+                        keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
+                        keyDown.post(tap: .cgSessionEventTap)
+                        keyUp.post(tap: .cgSessionEventTap)
+                    }
+                case "press":
+                    if let key = NaginataReader.keyCodeMap[value],
+                       let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: true) {
+                        keyDown.setIntegerValueField(.eventSourceUserData, value: 1)
+                        keyDown.post(tap: .cgSessionEventTap)
+                    }
+                case "release":
+                    if let key = NaginataReader.keyCodeMap[value],
+                       let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: false) {
+                        keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
+                        keyUp.post(tap: .cgSessionEventTap)
+                    }
+                default:
+                    print("no action")
+                }
             }
+
         }
     }
 }
