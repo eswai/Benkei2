@@ -124,6 +124,27 @@ class KeyRemapper {
                         keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
                         keyUp.post(tap: .cgSessionEventTap)
                     }
+                case "character":
+                    // 未変換を確定
+                    if let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_JIS_Eisu), keyDown: true),
+                       let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_JIS_Eisu), keyDown: false) {
+                        keyDown.setIntegerValueField(.eventSourceUserData, value: 1)
+                        keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
+                        keyDown.post(tap: .cgSessionEventTap)
+                        keyUp.post(tap: .cgSessionEventTap)
+                    }
+                    for scalar in value.unicodeScalars {
+                        let uniChar = UniChar(scalar.value)
+                        if let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: 0, keyDown: true),
+                           let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: 0, keyDown: false) {
+                            keyDown.keyboardSetUnicodeString(stringLength: 1, unicodeString: [uniChar])
+                            keyUp.keyboardSetUnicodeString(stringLength: 1, unicodeString: [uniChar])
+                            keyDown.setIntegerValueField(.eventSourceUserData, value: 1)
+                            keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
+                            keyDown.post(tap: .cgSessionEventTap)
+                            keyUp.post(tap: .cgSessionEventTap)
+                        }
+                    }
                 default:
                     print("no action")
                 }

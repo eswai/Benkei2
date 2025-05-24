@@ -885,3 +885,44 @@
     - tap: T
     - tap: S
     - tap: A
+- mae: [Shift]
+  douji: [T]
+  type:
+    - press: Shift
+    - tap: LeftArrow
+    - release: Shift
+- mae: [Shift]
+  douji: [Y]
+  type:
+    - press: Shift
+    - tap: RightArrow
+    - release: Shift
+- mae: [Shift]
+  douji: [V]
+  type:
+    - tap: Comma
+    - tap: Return
+- mae: [Shift]
+  douji: [M]
+  type:
+    - tap: Dot
+    - tap: Return
+- mae: []
+  douji: [V, M]
+  type:
+    - tap: Return
+- mae: []
+  douji: [Space]
+  type:
+    - tap: Space
+- mae: [J, K]
+  douji: [Q]
+  type:
+    - press: Command
+    - tap: LeftArrow
+    - release: Command
+- mae: [J, K]
+  douji: [W]
+  type:
+    - character: ／
+
