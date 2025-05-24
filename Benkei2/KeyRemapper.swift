@@ -78,6 +78,12 @@ class KeyRemapper {
 //            }
         }
         
+        // 修飾キーが押されている場合は処理をスキップ
+        let flags = event.flags
+        if flags.contains(.maskCommand) || flags.contains(.maskShift) || flags.contains(.maskControl) || flags.contains(.maskAlternate) {
+            return Unmanaged.passRetained(event)
+        }
+        
         if mode == "ja" && (type == .keyDown || type == .keyUp) && ng.isNaginata(kc: originalKeyCode) {
             // キーアップの場合は、pressedKeysから削除
             if type == .keyUp {
