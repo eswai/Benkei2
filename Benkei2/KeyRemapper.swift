@@ -151,6 +151,30 @@ class KeyRemapper {
                             keyUp.post(tap: .cgSessionEventTap)
                         }
                     }
+                    // 日本語入力へ切り替え。再変換にならないように「shift+かな」「かな」の2打にする。
+                    if let shiftDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_Shift), keyDown: true),
+                        let kanaDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_JIS_Kana), keyDown: true),
+                        let kanaUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_JIS_Kana), keyDown: false),
+                        let shiftUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_Shift), keyDown: false) {
+                         shiftDown.setIntegerValueField(.eventSourceUserData, value: 1)
+                         kanaDown.setIntegerValueField(.eventSourceUserData, value: 1)
+                         kanaUp.setIntegerValueField(.eventSourceUserData, value: 1)
+                         shiftUp.setIntegerValueField(.eventSourceUserData, value: 1)
+                         shiftDown.flags = .maskShift
+                         kanaDown.flags = .maskShift
+                         kanaUp.flags = .maskShift
+                         shiftDown.post(tap: .cgSessionEventTap)
+                         kanaDown.post(tap: .cgSessionEventTap)
+                         kanaUp.post(tap: .cgSessionEventTap)
+                         shiftUp.post(tap: .cgSessionEventTap)
+                    }
+                    if let kanaDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_JIS_Kana), keyDown: true),
+                        let kanaUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_JIS_Kana), keyDown: false) {
+                         kanaDown.setIntegerValueField(.eventSourceUserData, value: 1)
+                         kanaUp.setIntegerValueField(.eventSourceUserData, value: 1)
+                         kanaDown.post(tap: .cgSessionEventTap)
+                         kanaUp.post(tap: .cgSessionEventTap)
+                    }
                 default:
                     print("no action")
                 }
