@@ -85,6 +85,10 @@ class KeyRemapper {
         }
         
         if mode == "ja" && (type == .keyDown || type == .keyUp) && ng.isNaginata(kc: originalKeyCode) {
+            // キーリピート抑止: 既に押されているキーのkeyDownは無視
+            if type == .keyDown && pressedKeys.contains(originalKeyCode) {
+                return nil
+            }
             // キーアップの場合は、pressedKeysから削除
             if type == .keyUp {
                 pressedKeys.remove(originalKeyCode)
