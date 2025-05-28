@@ -103,7 +103,7 @@ class Naginata {
             }
         } else {
             nginput.append([])
-            if nginput.count > 1 || numberOfCandidates(keys: nginput.first!) == 1 {
+            if nginput.count > 0 && numberOfCandidates(keys: nginput.first!) == 1 {
                 r.append(contentsOf: ngType(keys: nginput.removeFirst()))
             }
         }
