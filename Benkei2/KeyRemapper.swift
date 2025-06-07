@@ -45,15 +45,24 @@ class KeyRemapper {
             self.runLoopSource = nil
         }
     }
-    
+
+    let kanaMethods = [
+        "com.apple.inputmethod.Japanese",
+        "com.apple.inputmethod.Japanese.Katakana",
+        "com.apple.inputmethod.Japanese.HalfWidthKana"
+    ]
+
     private func getCurrentInputMode() -> String {
         guard let inputSource = TISCopyCurrentKeyboardInputSource()?.takeUnretainedValue() else {
             return "en"
         }
-        let sourceID = TISGetInputSourceProperty(inputSource, kTISPropertyInputSourceID)
-        let sourceIDString = Unmanaged<CFString>.fromOpaque(sourceID!).takeUnretainedValue() as String
+        guard let sourceID = TISGetInputSourceProperty(inputSource, kTISPropertyInputModeID) else {
+            return "en"
+        }
+        let sourceIDString = Unmanaged<CFString>.fromOpaque(sourceID).takeUnretainedValue() as String
         
-        return sourceIDString.contains("com.apple.inputmethod.Kotoeri.RomajiTyping.Japanese") ? "ja" : "en"
+        // print("Current Input Source ID: \(sourceIDString)")
+        return kanaMethods.contains(sourceIDString) ? "ja" : "en"
     }
 
     func handle(event: CGEvent, type: CGEventType) -> Unmanaged<CGEvent>? {
