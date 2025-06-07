@@ -159,7 +159,14 @@ class NaginataReader {
         "PageUp": kVK_PageUp,
         "ForwardDelete": kVK_ForwardDelete,
         "End": kVK_End,
-        "PageDown": kVK_PageDown
+        "PageDown": kVK_PageDown,
+
+        "ISO_Section": kVK_ISO_Section,
+        "JIS_Yen": kVK_JIS_Yen,
+        "JIS_Underscore": kVK_JIS_Underscore,
+        "JIS_KeypadComma": kVK_JIS_KeypadComma,
+        "JIS_Eisu": kVK_JIS_Eisu,
+        "JIS_Kana": kVK_JIS_Kana
     ]
 
     static func readNaginataFile(path: String) -> [NaginataCommand]? {
