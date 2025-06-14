@@ -910,7 +910,7 @@
 - mae: [Space]
   douji: [M]
   type:
-    - tap: Dot
+    - tap: Period
     - tap: Return
 - mae: []
   douji: [V, M]
@@ -1066,7 +1066,7 @@
     - tap: DownArrow
     - release: Space
 - mae: [D, F]
-  douji: [Dot]
+  douji: [Period]
   type:
     - press: Space
     - tap: DownArrow
