@@ -1,4 +1,9 @@
 - mae: []
+  douji: [F, G]
+  type:
+    - tap: JIS_Eisu
+    - reset: true
+- mae: []
   douji: [U]
   type:
     - tap: Delete
@@ -22,11 +27,11 @@
   douji: [L]
   type:
     - tap: U
-- mae: [Shift]
+- mae: [Space]
   douji: [O]
   type:
     - tap: E
-- mae: [Shift]
+- mae: [Space]
   douji: [N]
   type:
     - tap: O
@@ -55,7 +60,7 @@
   type:
     - tap: K
     - tap: O
-- mae: [Shift]
+- mae: [Space]
   douji: [U]
   type:
     - tap: S
@@ -70,7 +75,7 @@
   type:
     - tap: S
     - tap: U
-- mae: [Shift]
+- mae: [Space]
   douji: [A]
   type:
     - tap: S
@@ -85,12 +90,12 @@
   type:
     - tap: T
     - tap: A
-- mae: [Shift]
+- mae: [Space]
   douji: [G]
   type:
     - tap: T
     - tap: I
-- mae: [Shift]
+- mae: [Space]
   douji: [L]
   type:
     - tap: T
@@ -110,22 +115,22 @@
   type:
     - tap: N
     - tap: A
-- mae: [Shift]
+- mae: [Space]
   douji: [D]
   type:
     - tap: N
     - tap: I
-- mae: [Shift]
+- mae: [Space]
   douji: [W]
   type:
     - tap: N
     - tap: U
-- mae: [Shift]
+- mae: [Space]
   douji: [Comma]
   type:
     - tap: N
     - tap: E
-- mae: [Shift]
+- mae: [Space]
   douji: [J]
   type:
     - tap: N
@@ -140,12 +145,12 @@
   type:
     - tap: H
     - tap: I
-- mae: [Shift]
+- mae: [Space]
   douji: [X]
   type:
     - tap: H
     - tap: I
-- mae: [Shift]
+- mae: [Space]
   douji: [Semicolon]
   type:
     - tap: H
@@ -160,47 +165,47 @@
   type:
     - tap: H
     - tap: O
-- mae: [Shift]
+- mae: [Space]
   douji: [Z]
   type:
     - tap: H
     - tap: O
-- mae: [Shift]
+- mae: [Space]
   douji: [F]
   type:
     - tap: M
     - tap: A
-- mae: [Shift]
+- mae: [Space]
   douji: [S]
   type:
     - tap: M
     - tap: I
-- mae: [Shift]
+- mae: [Space]
   douji: [B]
   type:
     - tap: M
     - tap: U
-- mae: [Shift]
+- mae: [Space]
   douji: [R]
   type:
     - tap: M
     - tap: E
-- mae: [Shift]
+- mae: [Space]
   douji: [K]
   type:
     - tap: M
     - tap: O
-- mae: [Shift]
+- mae: [Space]
   douji: [H]
   type:
     - tap: Y
     - tap: A
-- mae: [Shift]
+- mae: [Space]
   douji: [P]
   type:
     - tap: Y
     - tap: U
-- mae: [Shift]
+- mae: [Space]
   douji: [I]
   type:
     - tap: Y
@@ -210,7 +215,7 @@
   type:
     - tap: R
     - tap: A
-- mae: [Shift]
+- mae: [Space]
   douji: [E]
   type:
     - tap: R
@@ -225,7 +230,7 @@
   type:
     - tap: R
     - tap: E
-- mae: [Shift]
+- mae: [Space]
   douji: [Slash]
   type:
     - tap: R
@@ -235,12 +240,12 @@
   type:
     - tap: R
     - tap: O
-- mae: [Shift]
+- mae: [Space]
   douji: [Period]
   type:
     - tap: W
     - tap: A
-- mae: [Shift]
+- mae: [Space]
   douji: [C]
   type:
     - tap: W
@@ -885,24 +890,24 @@
     - tap: T
     - tap: S
     - tap: A
-- mae: [Shift]
+- mae: [Space]
   douji: [T]
   type:
-    - press: Shift
+    - press: Space
     - tap: LeftArrow
-    - release: Shift
-- mae: [Shift]
+    - release: Space
+- mae: [Space]
   douji: [Y]
   type:
-    - press: Shift
+    - press: Space
     - tap: RightArrow
-    - release: Shift
-- mae: [Shift]
+    - release: Space
+- mae: [Space]
   douji: [V]
   type:
     - tap: Comma
     - tap: Return
-- mae: [Shift]
+- mae: [Space]
   douji: [M]
   type:
     - tap: Dot
@@ -921,8 +926,161 @@
     - press: Command
     - tap: LeftArrow
     - release: Command
+    - press: Command
+    - tap: DownArrow
+    - release: Command
 - mae: [J, K]
   douji: [W]
   type:
     - character: ／
+- mae: [J, K]
+  douji: [R]
+  type:
+    - press: Command
+    - tap: S
+    - release: Command
+- mae: [J, K]
+  douji: [T]
+  type:
+    - tap: Slash
+- mae: [J, K]
+  douji: [A]
+  type:
+    - character: ……
+- mae: [J, K]
+  douji: [S]
+  type:
+    - character: 『
+- mae: [J, K]
+  douji: [D]
+  type:
+    - character: ？
+- mae: [J, K]
+  douji: [F]
+  type:
+    - character: 「
+- mae: [J, K]
+  douji: [G]
+  type:
+    - character: (
+- mae: [J, K]
+  douji: [Z]
+  type:
+    - character: ――
+- mae: [J, K]
+  douji: [X]
+  type:
+    - character: 』
+- mae: [J, K]
+  douji: [C]
+  type:
+    - character: ！
+- mae: [J, K]
+  douji: [V]
+  type:
+    - character: 」
+- mae: [J, K]
+  douji: [B]
+  type:
+    - character: )
+- mae: [D, F]
+  douji: [Y]
+  type:
+    - press: Control
+    - tap: A
+    - release: Control
+- mae: [D, F]
+  douji: [U]
+  type:
+    - press: Space
+    - press: Control
+    - tap: E
+    - release: Control
+    - release: Space
+    - tap: Delete
+- mae: [D, F]
+  douji: [I]
+  type:
+    - tap: JIS_Kana
+    - tap: JIS_Kana
+- mae: [D, F]
+  douji: [O]
+  type:
+    - tap: ForwardDelete
+- mae: [D, F]
+  douji: [P]
+  type:
+    - press: Space
+    - tap: Escape
+    - tap: Escape
+    - release: Space
+- mae: [D, F]
+  douji: [H]
+  type:
+    - tap: Return
+    - tap: End
+- mae: [D, F]
+  douji: [J]
+  type:
+    - tap: UpArrow
+- mae: [D, F]
+  douji: [K]
+  type:
+    - press: Space
+    - tap: UpArrow
+    - release: Space
+- mae: [D, F]
+  douji: [L]
+  type:
+    - press: Space
+    - tap: UpArrow
+    - tap: UpArrow
+    - tap: UpArrow
+    - tap: UpArrow
+    - tap: UpArrow
+    - tap: UpArrow
+    - tap: UpArrow
+    - release: Space
+- mae: [D, F]
+  douji: [Semicolon]
+  type:
+    - press: Control
+    - tap: K
+    - release: Control
+- mae: [D, F]
+  douji: [N]
+  type:
+    - press: Control
+    - tap: E
+    - release: Control
+- mae: [D, F]
+  douji: [M]
+  type:
+    - press: Control
+    - tap: E
+    - release: Control
+- mae: [D, F]
+  douji: [Comma]
+  type:
+    - press: Space
+    - tap: DownArrow
+    - release: Space
+- mae: [D, F]
+  douji: [Dot]
+  type:
+    - press: Space
+    - tap: DownArrow
+    - tap: DownArrow
+    - tap: DownArrow
+    - tap: DownArrow
+    - tap: DownArrow
+    - tap: DownArrow
+    - tap: DownArrow
+    - release: Space
+- mae: [D, F]
+  douji: [Slash]
+  type:
+    - press: Control
+    - tap: J
+    - release: Control
 

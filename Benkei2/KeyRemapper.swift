@@ -10,6 +10,9 @@ class KeyRemapper {
     private var ng: Naginata
     private var pressedKeys: Set<Int> = []
     
+    // H+J同時押し用の状態管理
+    private var hjbuf: Int = -1 // 同時押し判定用のバッファ
+
     // Updated key mapping dictionaries using kVK_ANSI_* constants with explicit casting
     let englishMapping: [Int: [Int]] = [
         // one-to-one mapping
@@ -75,16 +78,44 @@ class KeyRemapper {
         let mode = getCurrentInputMode()
         let originalKeyCode = Int(event.getIntegerValueField(.keyboardEventKeycode))
 
-        if mode == "en" && (type == .keyDown || type == .keyUp) {
-//            if let targetKeys = englishMapping[originalKeyCode] {
-//                if targetKeys.count == 1 {
-//                    event.setIntegerValueField(.keyboardEventKeycode, value: Int64(targetKeys[0]))
-//                    return Unmanaged.passRetained(event)
-//                } else if targetKeys.count >= 2 {
-//                    handleTargetKeys(targetKeys)
-//                    return nil
-//                }
-//            }
+        // キーリピートが無効
+        if type == .keyDown {
+            pressedKeys.insert(originalKeyCode)
+        } else if type == .keyUp {
+            if pressedKeys.contains(originalKeyCode) {
+                pressedKeys.remove(originalKeyCode)
+            } else {
+                return nil
+            }
+        }
+
+        if mode == "en" {
+            if type == .keyDown {
+                if hjbuf == -1 {
+                    if originalKeyCode == kVK_ANSI_H || originalKeyCode == kVK_ANSI_J {
+                        hjbuf = originalKeyCode;
+                        return nil;
+                    }
+                } else {
+                    if hjbuf + originalKeyCode == kVK_ANSI_H + kVK_ANSI_J {
+                        sendJISKanaKey()
+                        hjbuf = -1
+                        return nil
+                    } else {
+                        tapKey(keyCode: hjbuf)
+                        pressedKeys.remove(hjbuf)
+                        hjbuf = -1
+                        return Unmanaged.passRetained(event)
+                    }
+                }
+            } else if type == .keyUp {
+                if hjbuf > -1 && hjbuf == originalKeyCode {
+                    tapKey(keyCode: hjbuf)
+                    pressedKeys.remove(hjbuf)
+                    hjbuf = -1
+                    return nil
+                }
+            }
         }
         
         // 修飾キーが押されている場合は処理をスキップ
@@ -94,21 +125,11 @@ class KeyRemapper {
         }
         
         if mode == "ja" && (type == .keyDown || type == .keyUp) && ng.isNaginata(kc: originalKeyCode) {
-            // キーリピート抑止: 既に押されているキーのkeyDownは無視
-            if type == .keyDown && pressedKeys.contains(originalKeyCode) {
-                return nil
-            }
-            // キーアップの場合は、pressedKeysから削除
             if type == .keyUp {
-                pressedKeys.remove(originalKeyCode)
                 let targetKeys = ng.ngRelease(kc: originalKeyCode)
                 handleTargetKeys(targetKeys)
                 return nil
-            }
-            
-            // キーダウンの場合は、まだ押されていないキーのみ処理
-            if type == .keyDown && !pressedKeys.contains(originalKeyCode) {
-                pressedKeys.insert(originalKeyCode)                
+            } else if type == .keyDown {
                 let targetKeys = ng.ngPress(kc: originalKeyCode)
                 handleTargetKeys(targetKeys)
                 return nil
@@ -116,6 +137,22 @@ class KeyRemapper {
         }
 
         return Unmanaged.passRetained(event)
+    }
+
+    private func tapKey(keyCode: Int) {
+        if let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(keyCode), keyDown: true),
+           let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(keyCode), keyDown: false) {
+            keyDown.setIntegerValueField(.eventSourceUserData, value: 1)
+            keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
+            keyDown.post(tap: .cgSessionEventTap)
+            keyUp.post(tap: .cgSessionEventTap)
+        }
+    }
+
+    private func sendJISKanaKey() {
+        ng.reset()
+        pressedKeys.removeAll()
+        tapKey(keyCode: kVK_JIS_Kana)
     }
 
     private func handleTargetKeys(_ targetKeys: [[String: String]]) {
@@ -143,6 +180,10 @@ class KeyRemapper {
                         keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
                         keyUp.post(tap: .cgSessionEventTap)
                     }
+                case "reset":
+                    // Naginataの状態をリセット
+                    ng.reset()
+                    pressedKeys.removeAll()
                 case "character":
                     // 未変換を確定
                     if let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_JIS_Eisu), keyDown: true),

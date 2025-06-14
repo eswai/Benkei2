@@ -48,6 +48,11 @@ class Naginata {
         self.NGDIC = dictionary
     }
 
+    func reset() {
+        pressedKeys.removeAll()
+        nginput.removeAll()
+    }
+
     func isNaginata(kc: Int) -> Bool {
         return NG_KEYCODE.contains(kc)
     }
