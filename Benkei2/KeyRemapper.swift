@@ -9,6 +9,7 @@ class KeyRemapper {
     var isEnabled: Bool = true
     private var ng: Naginata
     private var pressedKeys: Set<Int> = []
+    private var keyRepeat = false
     
     // H+J同時押し用の状態管理
     private var hjbuf: Int = -1 // 同時押し判定用のバッファ
@@ -80,8 +81,14 @@ class KeyRemapper {
 
         // キーリピートが無効
         if type == .keyDown {
-            pressedKeys.insert(originalKeyCode)
+            if pressedKeys.contains(originalKeyCode) {
+                keyRepeat = true
+            } else {
+                keyRepeat = false
+                pressedKeys.insert(originalKeyCode)
+            }
         } else if type == .keyUp {
+            keyRepeat = false
             if pressedKeys.contains(originalKeyCode) {
                 pressedKeys.remove(originalKeyCode)
             } else {
@@ -125,6 +132,9 @@ class KeyRemapper {
         }
         
         if mode == "ja" && (type == .keyDown || type == .keyUp) && ng.isNaginata(kc: originalKeyCode) {
+            if keyRepeat {
+                return nil
+            }
             if type == .keyUp {
                 let targetKeys = ng.ngRelease(kc: originalKeyCode)
                 handleTargetKeys(targetKeys)
@@ -140,12 +150,30 @@ class KeyRemapper {
     }
 
     private func tapKey(keyCode: Int) {
-        if let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(keyCode), keyDown: true),
-           let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(keyCode), keyDown: false) {
-            keyDown.setIntegerValueField(.eventSourceUserData, value: 1)
-            keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
-            keyDown.post(tap: .cgSessionEventTap)
-            keyUp.post(tap: .cgSessionEventTap)
+        postKeyEvent(keyCode: keyCode, keyDown: true)
+        postKeyEvent(keyCode: keyCode, keyDown: false)
+    }
+
+    private func postKeyEvent(keyCode: Int, keyDown: Bool) {
+        if let keyEvent = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(keyCode), keyDown: keyDown) {
+            keyEvent.setIntegerValueField(.eventSourceUserData, value: 1)
+            keyEvent.post(tap: .cgSessionEventTap)
+        }
+    }
+
+    private func postKeyEventWithFlags(keyCode: Int, keyDown: Bool, flags: CGEventFlags = []) {
+        if let keyEvent = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(keyCode), keyDown: keyDown) {
+            keyEvent.setIntegerValueField(.eventSourceUserData, value: 1)
+            keyEvent.flags = flags
+            keyEvent.post(tap: .cgSessionEventTap)
+        }
+    }
+
+    private func postUnicodeEvent(unicodeString: [UniChar], keyDown: Bool) {
+        if let keyEvent = CGEvent(keyboardEventSource: nil, virtualKey: 0, keyDown: keyDown) {
+            keyEvent.keyboardSetUnicodeString(stringLength: unicodeString.count, unicodeString: unicodeString)
+            keyEvent.setIntegerValueField(.eventSourceUserData, value: 1)
+            keyEvent.post(tap: .cgSessionEventTap)
         }
     }
 
@@ -160,80 +188,42 @@ class KeyRemapper {
             for (mode, value) in action {
                 switch mode {
                 case "tap":
-                    if let key = NaginataReader.keyCodeMap[value],
-                       let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: true),
-                       let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: false) {
-                        keyDown.setIntegerValueField(.eventSourceUserData, value: 1)
-                        keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
-                        keyDown.post(tap: .cgSessionEventTap)
-                        keyUp.post(tap: .cgSessionEventTap)
+                    if let key = NaginataReader.keyCodeMap[value] {
+                        tapKey(keyCode: key)
                     }
                 case "press":
-                    if let key = NaginataReader.keyCodeMap[value],
-                       let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: true) {
-                        keyDown.setIntegerValueField(.eventSourceUserData, value: 1)
-                        keyDown.post(tap: .cgSessionEventTap)
+                    if let key = NaginataReader.keyCodeMap[value] {
+                        postKeyEvent(keyCode: key, keyDown: true)
                     }
                 case "release":
-                    if let key = NaginataReader.keyCodeMap[value],
-                       let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(key), keyDown: false) {
-                        keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
-                        keyUp.post(tap: .cgSessionEventTap)
+                    if let key = NaginataReader.keyCodeMap[value] {
+                        postKeyEvent(keyCode: key, keyDown: false)
                     }
                 case "reset":
-                    // Naginataの状態をリセット
                     ng.reset()
                     pressedKeys.removeAll()
                 case "character":
                     // 未変換を確定
-                    if let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_JIS_Eisu), keyDown: true),
-                       let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_JIS_Eisu), keyDown: false) {
-                        keyDown.setIntegerValueField(.eventSourceUserData, value: 1)
-                        keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
-                        keyDown.post(tap: .cgSessionEventTap)
-                        keyUp.post(tap: .cgSessionEventTap)
-                    }
+                    tapKey(keyCode: kVK_JIS_Eisu)
+                    
+                    // Unicode文字を送信
                     for scalar in value.unicodeScalars {
                         let uniChar = UniChar(scalar.value)
-                        if let keyDown = CGEvent(keyboardEventSource: nil, virtualKey: 0, keyDown: true),
-                           let keyUp = CGEvent(keyboardEventSource: nil, virtualKey: 0, keyDown: false) {
-                            keyDown.keyboardSetUnicodeString(stringLength: 1, unicodeString: [uniChar])
-                            keyUp.keyboardSetUnicodeString(stringLength: 1, unicodeString: [uniChar])
-                            keyDown.setIntegerValueField(.eventSourceUserData, value: 1)
-                            keyUp.setIntegerValueField(.eventSourceUserData, value: 1)
-                            keyDown.post(tap: .cgSessionEventTap)
-                            keyUp.post(tap: .cgSessionEventTap)
-                        }
+                        postUnicodeEvent(unicodeString: [uniChar], keyDown: true)
+                        postUnicodeEvent(unicodeString: [uniChar], keyDown: false)
                     }
-                    // 日本語入力へ切り替え。再変換にならないように「shift+かな」「かな」の2打にする。
-                    if let shiftDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_Shift), keyDown: true),
-                        let kanaDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_JIS_Kana), keyDown: true),
-                        let kanaUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_JIS_Kana), keyDown: false),
-                        let shiftUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_Shift), keyDown: false) {
-                         shiftDown.setIntegerValueField(.eventSourceUserData, value: 1)
-                         kanaDown.setIntegerValueField(.eventSourceUserData, value: 1)
-                         kanaUp.setIntegerValueField(.eventSourceUserData, value: 1)
-                         shiftUp.setIntegerValueField(.eventSourceUserData, value: 1)
-                         shiftDown.flags = .maskShift
-                         kanaDown.flags = .maskShift
-                         kanaUp.flags = .maskShift
-                         shiftDown.post(tap: .cgSessionEventTap)
-                         kanaDown.post(tap: .cgSessionEventTap)
-                         kanaUp.post(tap: .cgSessionEventTap)
-                         shiftUp.post(tap: .cgSessionEventTap)
-                    }
-                    if let kanaDown = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_JIS_Kana), keyDown: true),
-                        let kanaUp = CGEvent(keyboardEventSource: nil, virtualKey: CGKeyCode(kVK_JIS_Kana), keyDown: false) {
-                         kanaDown.setIntegerValueField(.eventSourceUserData, value: 1)
-                         kanaUp.setIntegerValueField(.eventSourceUserData, value: 1)
-                         kanaDown.post(tap: .cgSessionEventTap)
-                         kanaUp.post(tap: .cgSessionEventTap)
-                    }
+                    
+                    // 日本語入力へ切り替え
+                    postKeyEventWithFlags(keyCode: kVK_Shift, keyDown: true, flags: .maskShift)
+                    postKeyEventWithFlags(keyCode: kVK_JIS_Kana, keyDown: true, flags: .maskShift)
+                    postKeyEventWithFlags(keyCode: kVK_JIS_Kana, keyDown: false, flags: .maskShift)
+                    postKeyEventWithFlags(keyCode: kVK_Shift, keyDown: false)
+                    
+                    tapKey(keyCode: kVK_JIS_Kana)
                 default:
                     print("no action")
                 }
             }
-
         }
     }
 }
