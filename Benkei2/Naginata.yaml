@@ -893,15 +893,15 @@
 - mae: [Space]
   douji: [T]
   type:
-    - press: Space
+    - press: Shift
     - tap: LeftArrow
-    - release: Space
+    - release: Shift
 - mae: [Space]
   douji: [Y]
   type:
-    - press: Space
+    - press: Shift
     - tap: RightArrow
-    - release: Space
+    - release: Shift
 - mae: [Space]
   douji: [V]
   type:
@@ -923,6 +923,7 @@
 - mae: [J, K]
   douji: [Q]
   type:
+  # ^{End} 最新の位置へ
     - press: Command
     - tap: LeftArrow
     - release: Command
@@ -932,107 +933,130 @@
 - mae: [J, K]
   douji: [W]
   type:
+  # ／{改行}
     - character: ／
+# - mae: [J, K]
+#   douji: [E]
 - mae: [J, K]
   douji: [R]
   type:
+  # ^s 保存
     - press: Command
     - tap: S
     - release: Command
 - mae: [J, K]
   douji: [T]
   type:
+  # ・(未確定)
     - tap: Slash
 - mae: [J, K]
   douji: [A]
   type:
+  # ……{改行}
     - character: ……
 - mae: [J, K]
   douji: [S]
   type:
+  # 『{改行}
     - character: 『
 - mae: [J, K]
   douji: [D]
   type:
+  # ？{改行}
     - character: ？
 - mae: [J, K]
   douji: [F]
   type:
+  # 「{改行}
     - character: 「
 - mae: [J, K]
   douji: [G]
   type:
+  # ({改行}
     - character: (
 - mae: [J, K]
   douji: [Z]
   type:
+  # ――{改行}
     - character: ――
 - mae: [J, K]
   douji: [X]
   type:
+  # 』{改行}
     - character: 』
 - mae: [J, K]
   douji: [C]
   type:
+  # ！{改行}
     - character: ！
 - mae: [J, K]
   douji: [V]
   type:
+  # 」{改行}
     - character: 」
 - mae: [J, K]
   douji: [B]
   type:
+  # ){改行}
     - character: )
 - mae: [D, F]
   douji: [Y]
   type:
+  # {Home} 行頭
     - press: Control
     - tap: A
     - release: Control
 - mae: [D, F]
   douji: [U]
   type:
-    - press: Space
+  # +{End}{BS} 行末削除
     - press: Control
-    - tap: E
+    - tap: K
     - release: Control
-    - release: Space
-    - tap: Delete
 - mae: [D, F]
   douji: [I]
   type:
+  # {vk1Csc079} 再変換
     - tap: JIS_Kana
     - tap: JIS_Kana
 - mae: [D, F]
   douji: [O]
   type:
+  # {Del}
     - tap: ForwardDelete
 - mae: [D, F]
   douji: [P]
   type:
-    - press: Space
+  # +{Esc 2} 入力キャンセル
+    - press: Shift
     - tap: Escape
     - tap: Escape
-    - release: Space
+    - release: Shift
 - mae: [D, F]
   douji: [H]
   type:
+  # {Enter}{End} 確定行末
     - tap: Return
-    - tap: End
+    - press: Control
+    - tap: E
+    - release: Control
 - mae: [D, F]
   douji: [J]
   type:
+  # {↑}
     - tap: UpArrow
 - mae: [D, F]
   douji: [K]
   type:
-    - press: Space
+  # +{↑}
+    - press: Shift
     - tap: UpArrow
-    - release: Space
+    - release: Shift
 - mae: [D, F]
   douji: [L]
   type:
-    - press: Space
+  # +{↑ 7}
+    - press: Shift
     - tap: UpArrow
     - tap: UpArrow
     - tap: UpArrow
@@ -1040,35 +1064,38 @@
     - tap: UpArrow
     - tap: UpArrow
     - tap: UpArrow
-    - release: Space
+    - release: Shift
 - mae: [D, F]
   douji: [Semicolon]
   type:
+  # ^i
     - press: Control
     - tap: K
     - release: Control
 - mae: [D, F]
   douji: [N]
   type:
+  # {End}
     - press: Control
     - tap: E
     - release: Control
 - mae: [D, F]
   douji: [M]
   type:
-    - press: Control
-    - tap: E
-    - release: Control
+  # {↓}
+    - tap: DownArrow
 - mae: [D, F]
   douji: [Comma]
   type:
-    - press: Space
+  # +{↓}
+    - press: Shift
     - tap: DownArrow
-    - release: Space
+    - release: Shift
 - mae: [D, F]
   douji: [Period]
   type:
-    - press: Space
+  # +{↓ 7}
+    - press: Shift
     - tap: DownArrow
     - tap: DownArrow
     - tap: DownArrow
@@ -1076,11 +1103,251 @@
     - tap: DownArrow
     - tap: DownArrow
     - tap: DownArrow
-    - release: Space
+    - release: Shift
 - mae: [D, F]
   douji: [Slash]
   type:
+  # ^u
     - press: Control
     - tap: J
     - release: Control
-
+- mae: [M, Comma]
+  douji: [Q]
+  type:
+  # ｜
+    - character: ｜
+- mae: [M, Comma]
+  douji: [W]
+  type:
+    - character: 　　　×　　　×　　　×
+    - tap: Return
+- mae: [M, Comma]
+  douji: [E]
+  #{Home}{→}{End}{Del 2}{←} セリフ接ぎ
+  type:
+    - press: Control
+    - tap: A
+    - release: Control
+    - tap: RightArrow
+    - press: Control
+    - tap: E
+    - release: Control
+    - tap: Delete
+    - tap: Delete
+    - tap: LeftArrow
+- mae: [M, Comma]
+  douji: [R]
+  type:
+  #{Home}{改行}{Space 1}{←} セリフ切り
+    - press: Control
+    - tap: A
+    - release: Control
+    - tap: Return
+    - tap: Space
+    - tap: LeftArrow
+- mae: [M, Comma]
+  douji: [T]
+  type:
+  # 〇{改行}
+    - character: 〇
+- mae: [M, Comma]
+  douji: [A]
+  type:
+  # 《{改行} 
+    - character: 《
+- mae: [M, Comma]
+  douji: [S]
+  type:
+  # 【{改行}
+    - character: 【
+- mae: [M, Comma]
+  douji: [D]
+  type:
+  # {Home}{→}{End}{Del 4}{←} ト書き接ぎ
+    - press: Control
+    - tap: A
+    - release: Control
+    - tap: RightArrow
+    - press: Control
+    - tap: E
+    - release: Control
+    - tap: Delete
+    - tap: Delete
+    - tap: Delete
+    - tap: Delete
+    - tap: LeftArrow
+- mae: [M, Comma]
+  douji: [F]
+  type:
+  # {Home}{改行}{Space 3}{←} ト書き切り
+    - press: Control
+    - tap: A
+    - release: Control
+    - tap: Return
+    - tap: Space
+    - tap: Space
+    - tap: Space
+    - tap: LeftArrow
+- mae: [M, Comma]
+  douji: [G]
+  type:
+  # {Space 3}
+    - tap: Space
+    - tap: Space
+    - tap: Space
+- mae: [M, Comma]
+  douji: [Z]
+  type:
+  # 》{改行}
+    - character: 》
+- mae: [M, Comma]
+  douji: [X]
+  type:
+  # 】{改行}
+    - character: 】
+- mae: [M, Comma]
+  douji: [C]
+  type:
+  # 」{改行}{改行}
+    - character: 」
+    - tap: Return
+- mae: [M, Comma]
+  douji: [V]
+  type:
+  # 」{改行}{改行}「{改行} 
+    - character: 」
+    - tap: Return
+    - character: 「
+- mae: [M, Comma]
+  douji: [B]
+  type:
+  # {改行}{改行}{Space}
+    - tap: Return
+    - tap: Return
+    - tap: Space
+- mae: [C, V]
+  douji: [Y]
+  type:
+  # +{Home}
+    - press: Shift
+    - press: Control
+    - tap: A
+    - release: Control
+    - release: Shift
+- mae: [C, V]
+  douji: [U]
+  type:
+  # ^x
+    - press: Command
+    - tap: X
+    - release: Command
+- mae: [C, V]
+  douji: [I]
+  type:
+  # {vk1Csc079} 無変換
+    - tap: JIS_Kana
+    - tap: JIS_Kana
+- mae: [C, V]
+  douji: [O]
+  type:
+  # ^v
+    - press: Command
+    - tap: V
+    - release: Command
+- mae: [C, V]
+  douji: [P]
+  type:
+  # ^z
+    - press: Command
+    - tap: Z
+    - release: Command
+- mae: [C, V]
+  douji: [H]
+  type:
+  # ^c
+    - press: Command
+    - tap: C
+    - release: Command
+- mae: [C, V]
+  douji: [J]
+  type:
+  # {←}
+    - tap: LeftArrow
+- mae: [C, V]
+  douji: [K]
+  type:
+  # {→}
+    - tap: RightArrow
+- mae: [C, V]
+  douji: [L]
+  type:
+  # {改行}{Space}+{Home}^x{BS} コピークリア
+    - tap: Return
+    - tap: Space
+    - press: Shift
+    - press: Control
+    - tap: A
+    - release: Control
+    - release: Shift
+    - press: Command
+    - tap: X
+    - release: Command
+    - tap: ForwardDelete
+- mae: [C, V]
+  douji: [Semicolon]
+  type:
+  # ^y
+    - press: Shift
+    - press: Command
+    - tap: Z
+    - release: Command
+    - release: Shift
+- mae: [C, V]
+  douji: [N]
+  type:
+  # +{End}
+    - press: Shift
+    - press: Control
+    - tap: E
+    - release: Control
+    - release: Shift
+- mae: [C, V]
+  douji: [M]
+  type:
+  # +{←}
+    - press: Shift
+    - tap: LeftArrow
+    - release: Shift
+- mae: [C, V]
+  douji: [Comma]
+  type:
+  # +{→}
+    - press: Shift
+    - tap: RightArrow
+    - release: Shift
+- mae: [C, V]
+  douji: [Period]
+  type:
+  # +{← 7}
+    - press: Shift
+    - tap: LeftArrow
+    - tap: LeftArrow
+    - tap: LeftArrow
+    - tap: LeftArrow
+    - tap: LeftArrow
+    - tap: LeftArrow
+    - tap: LeftArrow
+    - release: Shift
+- mae: [C, V]
+  douji: [Slash]
+  type:
+  # +{→ 7}
+    - press: Shift
+    - tap: RightArrow
+    - tap: RightArrow
+    - tap: RightArrow
+    - tap: RightArrow
+    - tap: RightArrow
+    - tap: RightArrow
+    - tap: RightArrow
+    - release: Shift

@@ -184,20 +184,64 @@ class KeyRemapper {
     }
 
     private func handleTargetKeys(_ targetKeys: [[String: String]]) {
+        var modifiedKeys: Set<Int> = []
         for action in targetKeys {
             for (mode, value) in action {
                 switch mode {
                 case "tap":
                     if let key = NaginataReader.keyCodeMap[value] {
-                        tapKey(keyCode: key)
+                        if modifiedKeys.contains(kVK_Shift) {
+                            postKeyEventWithFlags(keyCode: key, keyDown: true, flags: .maskShift)
+                            postKeyEventWithFlags(keyCode: key, keyDown: false, flags: .maskShift)
+                        } else if modifiedKeys.contains(kVK_Control) {
+                            postKeyEventWithFlags(keyCode: key, keyDown: true, flags: .maskControl)
+                            postKeyEventWithFlags(keyCode: key, keyDown: false, flags: .maskControl)
+                        } else if modifiedKeys.contains(kVK_Command) {
+                            postKeyEventWithFlags(keyCode: key, keyDown: true, flags: .maskCommand)
+                            postKeyEventWithFlags(keyCode: key, keyDown: false, flags: .maskCommand)
+                        } else if modifiedKeys.contains(kVK_Option) {
+                            postKeyEventWithFlags(keyCode: key, keyDown: true, flags: .maskAlternate)
+                            postKeyEventWithFlags(keyCode: key, keyDown: false, flags: .maskAlternate)
+                        } else {
+                            postKeyEvent(keyCode: key, keyDown: true)
+                            postKeyEvent(keyCode: key, keyDown: false)
+                        }
                     }
                 case "press":
                     if let key = NaginataReader.keyCodeMap[value] {
-                        postKeyEvent(keyCode: key, keyDown: true)
+                        if [kVK_Shift, kVK_Control, kVK_Command, kVK_Option].contains(key) {
+                            modifiedKeys.insert(key)
+                            continue
+                        }
+                        if modifiedKeys.contains(kVK_Shift) {
+                            postKeyEventWithFlags(keyCode: key, keyDown: true, flags: .maskShift)
+                        } else if modifiedKeys.contains(kVK_Control) {
+                            postKeyEventWithFlags(keyCode: key, keyDown: true, flags: .maskControl)
+                        } else if modifiedKeys.contains(kVK_Command) {
+                            postKeyEventWithFlags(keyCode: key, keyDown: true, flags: .maskCommand)
+                        } else if modifiedKeys.contains(kVK_Option) {
+                            postKeyEventWithFlags(keyCode: key, keyDown: true, flags: .maskAlternate)
+                        } else {
+                            postKeyEvent(keyCode: key, keyDown: true)
+                        }
                     }
                 case "release":
                     if let key = NaginataReader.keyCodeMap[value] {
-                        postKeyEvent(keyCode: key, keyDown: false)
+                        if [kVK_Shift, kVK_Control, kVK_Command, kVK_Option].contains(key) {
+                            modifiedKeys.remove(key)
+                            continue
+                        }
+                        if modifiedKeys.contains(kVK_Shift) {
+                            postKeyEventWithFlags(keyCode: key, keyDown: false, flags: .maskShift)
+                        } else if modifiedKeys.contains(kVK_Control) {
+                            postKeyEventWithFlags(keyCode: key, keyDown: false, flags: .maskControl)
+                        } else if modifiedKeys.contains(kVK_Command) {
+                            postKeyEventWithFlags(keyCode: key, keyDown: false, flags: .maskCommand)
+                        } else if modifiedKeys.contains(kVK_Option) {
+                            postKeyEventWithFlags(keyCode: key, keyDown: false, flags: .maskAlternate)
+                        } else {
+                            postKeyEvent(keyCode: key, keyDown: false)
+                        }
                     }
                 case "reset":
                     ng.reset()
@@ -225,5 +269,6 @@ class KeyRemapper {
                 }
             }
         }
+        modifiedKeys.removeAll()
     }
 }
