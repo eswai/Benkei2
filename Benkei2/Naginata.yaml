@@ -1,20 +1,4 @@
-- mae: []
-  douji: [F, G]
-  type:
-    - tap: JIS_Eisu
-    - reset: true
-- mae: []
-  douji: [U]
-  type:
-    - tap: Delete
-- mae: []
-  douji: [T]
-  type:
-    - tap: LeftArrow
-- mae: []
-  douji: [Y]
-  type:
-    - tap: RightArrow
+# ---------------------------------------- かな変換
 - mae: []
   douji: [J]
   type:
@@ -890,17 +874,43 @@
     - tap: T
     - tap: S
     - tap: A
+# ---------------------------------------- 非かな変換
+- mae: []
+  douji: [F, G]
+  type:
+    - tap: JIS_Eisu
+    - reset: true
+- mae: []
+  douji: [U]
+  type:
+    - tap: Delete
+- mae: []
+  douji: [T]
+  type:
+    - press: Control
+    - tap: N
+    - release: Control
+- mae: []
+  douji: [Y]
+  type:
+    - press: Control
+    - tap: P
+    - release: Control
 - mae: [Space]
   douji: [T]
   type:
     - press: Shift
-    - tap: LeftArrow
+    - press: Control
+    - tap: N
+    - release: Control
     - release: Shift
 - mae: [Space]
   douji: [Y]
   type:
     - press: Shift
-    - tap: RightArrow
+    - press: Control
+    - tap: P
+    - release: Control
     - release: Shift
 - mae: [Space]
   douji: [V]
@@ -920,6 +930,7 @@
   douji: [Space]
   type:
     - tap: Space
+# ---------------------------------------- 編集モード1
 - mae: [J, K]
   douji: [Q]
   type:
@@ -1111,6 +1122,7 @@
     - press: Control
     - tap: J
     - release: Control
+# ---------------------------------------- 編集モード2
 - mae: [M, Comma]
   douji: [Q]
   type:
@@ -1127,14 +1139,14 @@
   type:
     - press: Control
     - tap: A
-    - release: Control
-    - tap: RightArrow
-    - press: Control
+    - tap: P
     - tap: E
     - release: Control
-    - tap: Delete
-    - tap: Delete
-    - tap: LeftArrow
+    - tap: ForwardDelete
+    - tap: ForwardDelete
+    - press: Control
+    - tap: N
+    - release: Control
 - mae: [M, Comma]
   douji: [R]
   type:
@@ -1144,7 +1156,9 @@
     - release: Control
     - tap: Return
     - tap: Space
-    - tap: LeftArrow
+    - press: Control
+    - tap: N
+    - release: Control
 - mae: [M, Comma]
   douji: [T]
   type:
@@ -1166,16 +1180,16 @@
   # {Home}{→}{End}{Del 4}{←} ト書き接ぎ
     - press: Control
     - tap: A
-    - release: Control
-    - tap: RightArrow
-    - press: Control
+    - tap: P
     - tap: E
     - release: Control
-    - tap: Delete
-    - tap: Delete
-    - tap: Delete
-    - tap: Delete
-    - tap: LeftArrow
+    - tap: ForwardDelete
+    - tap: ForwardDelete
+    - tap: ForwardDelete
+    - tap: ForwardDelete
+    - press: Control
+    - tap: N
+    - release: Control
 - mae: [M, Comma]
   douji: [F]
   type:
@@ -1187,7 +1201,9 @@
     - tap: Space
     - tap: Space
     - tap: Space
-    - tap: LeftArrow
+    - press: Control
+    - tap: N
+    - release: Control
 - mae: [M, Comma]
   douji: [G]
   type:
@@ -1292,7 +1308,7 @@
     - press: Command
     - tap: X
     - release: Command
-    - tap: ForwardDelete
+    - tap: Delete
 - mae: [C, V]
   douji: [Semicolon]
   type:
