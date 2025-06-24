@@ -10,18 +10,18 @@ class Naginata {
         kVK_Space, kVK_Return
     ]
 
-    let NGDIC: [([Int], [Int], [[String: String]])]
+    let NGDIC: [(Set<Int>, Set<Int>, [[String: String]])]
 
-    let NGSHIFT1: [[Int]] = [
+    let NGSHIFT1: [Set<Int>] = [
         [kVK_Space], [kVK_Return], [kVK_ANSI_D, kVK_ANSI_F], [kVK_ANSI_C, kVK_ANSI_V], [kVK_ANSI_J, kVK_ANSI_K], [kVK_ANSI_M, kVK_ANSI_Comma]
     ]
 
-    let NGSHIFT2: [[Int]] = [
+    let NGSHIFT2: [Set<Int>] = [
         [kVK_ANSI_D, kVK_ANSI_F], [kVK_ANSI_C, kVK_ANSI_V], [kVK_ANSI_J, kVK_ANSI_K], [kVK_ANSI_M, kVK_ANSI_Comma],
         [kVK_Space], [kVK_Return], [kVK_ANSI_F], [kVK_ANSI_V], [kVK_ANSI_J], [kVK_ANSI_M]
     ]
 
-    let HENSHU: [[Int]] = [
+    let HENSHU: [Set<Int>] = [
         [kVK_ANSI_D, kVK_ANSI_F], [kVK_ANSI_C, kVK_ANSI_V], [kVK_ANSI_J, kVK_ANSI_K], [kVK_ANSI_M, kVK_ANSI_Comma]
     ]
 
@@ -35,11 +35,11 @@ class Naginata {
         }
         
         // コマンドから変換辞書を構築
-        var dictionary: [([Int], [Int], [[String: String]])] = []
+        var dictionary: [(Set<Int>, Set<Int>, [[String: String]])] = []
         
         for command in commands {
-            let mae = command.mae
-            let douji = command.douji
+            let mae = Set(command.mae)
+            let douji = Set(command.douji)
             let type = command.type
             
             dictionary.append((mae, douji, type))
@@ -84,7 +84,7 @@ class Naginata {
             // rskc.append(kc)
             // じょじょ よを先に押すと連続シフトしない x
             // Falseにすると、がる が　がある になる x
-            if !rs.contains(kc) && Set(rs).isSubset(of: pressedKeys) && numberOfMatches(keys: rskc) > 0 {
+            if !rs.contains(kc) && rs.isSubset(of: pressedKeys) && numberOfMatches(keys: rskc) > 0 {
                 nginput[nginput.count - 1] = rskc
                 break
             }
@@ -125,7 +125,7 @@ class Naginata {
 
         let skc = Set(keys.map { $0 == kVK_Return ? kVK_Space : $0 })
         for k in NGDIC {
-            if skc == Set(k.0 + k.1) {
+            if skc == k.0.union(k.1) {
                 return k.2
             }
         }
@@ -160,9 +160,9 @@ class Naginata {
         } else {
             var f = true
             for rs in HENSHU {
-                if keys.count == 3 && Set(keys[0..<2]) == Set(rs) {
+                if keys.count == 3 && Set(keys[0..<2]) == rs {
                     for k in NGDIC {
-                        if Set(rs) == Set(k.0) && Set([keys[2]]) == Set(k.1) {
+                        if rs == Set(k.0) && Set([keys[2]]) == Set(k.1) {
                             noc = 1
                             f = false
                             break
@@ -193,7 +193,7 @@ class Naginata {
 
         var noc = 0
 
-        if NGSHIFT1.contains(keys) {
+        if NGSHIFT1.contains(Set(keys)) {
             noc = 2
         } else if [kVK_Space, kVK_Return].contains(keys[0]) && keys.count > 1 {
             let skc = Set(keys[1...])
@@ -209,9 +209,9 @@ class Naginata {
         } else {
             var f = true
             for rs in HENSHU {
-                if keys.count == 3 && Set(keys[0..<2]) == Set(rs) {
+                if keys.count == 3 && Set(keys[0..<2]) == rs {
                     for k in NGDIC {
-                        if Set(rs) == Set(k.0) && Set([keys[2]]) == Set(k.1) {
+                        if rs == Set(k.0) && Set([keys[2]]) == Set(k.1) {
                             noc = 1
                             f = false
                             break
