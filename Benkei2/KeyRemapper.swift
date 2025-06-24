@@ -192,6 +192,8 @@ class KeyRemapper {
                     if let key = NaginataReader.keyCodeMap[value] {
                         postKeyEventWithFlags(keyCode: key, keyDown: true, flags: flags)
                         postKeyEventWithFlags(keyCode: key, keyDown: false, flags: flags)
+                    } else {
+                        print("Unknown key: \(value)")
                     }
                 case "press":
                     if let key = NaginataReader.keyCodeMap[value] {
@@ -209,6 +211,8 @@ class KeyRemapper {
                             continue
                         }
                         postKeyEventWithFlags(keyCode: key, keyDown: true, flags: flags)
+                    } else {
+                        print("Unknown key: \(value)")
                     }
                 case "release":
                     if let key = NaginataReader.keyCodeMap[value] {
@@ -226,6 +230,8 @@ class KeyRemapper {
                             continue
                         }
                         postKeyEventWithFlags(keyCode: key, keyDown: false)
+                    } else {
+                        print("Unknown key: \(value)")
                     }
                 case "reset":
                     ng.reset()
@@ -253,7 +259,6 @@ class KeyRemapper {
                 }
             }
         }
-        // modifiedKeys.removeAll()
         flags = []
     }
 }
