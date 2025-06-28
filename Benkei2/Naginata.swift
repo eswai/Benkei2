@@ -174,7 +174,7 @@ class Naginata {
             if f {
                 let skc = Set(keys)
                 for k in NGDIC {
-                    if k.0.isEmpty && Set(k.1) == skc {
+                    if k.0.union(k.1) == skc {
                         noc += 1
                         if noc > 1 {
                             break
@@ -193,8 +193,13 @@ class Naginata {
 
         var noc = 0
 
-        if NGSHIFT1.contains(Set(keys)) {
+        // シフトの単打
+        if keys.count == 1 && [kVK_Space, kVK_Return].contains(keys[0]) {
             noc = 2
+        // 編集モードの途中
+        } else if keys.count == 2 && NGSHIFT1.contains(Set(keys)) {
+            noc = 2
+        // シフトの途中
         } else if [kVK_Space, kVK_Return].contains(keys[0]) && keys.count > 1 {
             let skc = Set(keys[1...])
             for k in NGDIC {
@@ -207,6 +212,7 @@ class Naginata {
                 }
             }
         } else {
+            // 編集モード
             var f = true
             for rs in HENSHU {
                 if keys.count == 3 && Set(keys[0..<2]) == rs {
@@ -220,20 +226,18 @@ class Naginata {
                     if !f { break }
                 }
             }
+            // 同時押し、単打
             if f {
                 let skc = Set(keys)
                 for k in NGDIC {
-                    if k.0.isEmpty && skc.isSubset(of: Set(k.1)) {  // <=だけ違う
-                        // シェ、チェは２文字タイプしたらnoc = 1になるが、まだ２キーしか押してないので、早期確定してはいけない。
-                        if keys.count < k.1.count {
-                            noc = 2
-                            break
-                        } else {
-                            noc += 1
-                            if noc > 1 {
-                                break
-                            }
-                        }
+                    let k01 = k.0.union(k.1)
+                    if skc == k01 {
+                        noc += 1
+                    } else if skc.isStrictSubset(of: k01) {
+                        noc = 2
+                    }
+                    if noc > 1 {
+                        break
                     }
                 }
             }
