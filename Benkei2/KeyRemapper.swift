@@ -44,7 +44,9 @@ class KeyRemapper {
 
     func stop() {
         if let eventTap = eventTap, let runLoopSource = runLoopSource {
+            CGEvent.tapEnable(tap: eventTap, enable: false)
             CFRunLoopRemoveSource(CFRunLoopGetCurrent(), runLoopSource, .commonModes)
+            CFMachPortInvalidate(eventTap)
             self.eventTap = nil
             self.runLoopSource = nil
         }
@@ -183,59 +185,68 @@ class KeyRemapper {
         tapKey(keyCode: kVK_JIS_Kana)
     }
 
+    private var currentModifierFlags: CGEventFlags = []
+
+    private func updateModifierFlags(for key: Int, isPress: Bool) {
+        switch key {
+        case kVK_Shift:
+            if isPress {
+                currentModifierFlags.insert(.maskShift)
+            } else {
+                currentModifierFlags.remove(.maskShift)
+            }
+        case kVK_Control:
+            if isPress {
+                currentModifierFlags.insert(.maskControl)
+            } else {
+                currentModifierFlags.remove(.maskControl)
+            }
+        case kVK_Command:
+            if isPress {
+                currentModifierFlags.insert(.maskCommand)
+            } else {
+                currentModifierFlags.remove(.maskCommand)
+            }
+        case kVK_Option:
+            if isPress {
+                currentModifierFlags.insert(.maskAlternate)
+            } else {
+                currentModifierFlags.remove(.maskAlternate)
+            }
+        default:
+            break
+        }
+    }
+
     private func handleTargetKeys(_ targetKeys: [[String: String]]) {
-        var flags: CGEventFlags = []
         for action in targetKeys {
             for (mode, value) in action {
                 switch mode {
                 case "tap":
                     if let key = NaginataReader.keyCodeMap[value] {
-                        postKeyEventWithFlags(keyCode: key, keyDown: true, flags: flags)
-                        postKeyEventWithFlags(keyCode: key, keyDown: false, flags: flags)
+                        postKeyEventWithFlags(keyCode: key, keyDown: true, flags: currentModifierFlags)
+                        postKeyEventWithFlags(keyCode: key, keyDown: false, flags: currentModifierFlags)
                     } else {
                         print("Unknown key: \(value)")
                     }
                 case "press":
                     if let key = NaginataReader.keyCodeMap[value] {
-                        if key == kVK_Shift {
-                            flags.insert(.maskShift)
-                            continue
-                        } else if key == kVK_Control {
-                            flags.insert(.maskControl)
-                            continue
-                        } else if key == kVK_Command {
-                            flags.insert(.maskCommand)
-                            continue
-                        } else if key == kVK_Option {
-                            flags.insert(.maskAlternate)
-                            continue
-                        }
-                        postKeyEventWithFlags(keyCode: key, keyDown: true, flags: flags)
+                        updateModifierFlags(for: key, isPress: true)
+                        postKeyEventWithFlags(keyCode: key, keyDown: true, flags: currentModifierFlags)
                     } else {
                         print("Unknown key: \(value)")
                     }
                 case "release":
                     if let key = NaginataReader.keyCodeMap[value] {
-                        if key == kVK_Shift {
-                            flags.remove(.maskShift)
-                            continue
-                        } else if key == kVK_Control {
-                            flags.remove(.maskControl)
-                            continue
-                        } else if key == kVK_Command {
-                            flags.remove(.maskCommand)
-                            continue
-                        } else if key == kVK_Option {
-                            flags.remove(.maskAlternate)
-                            continue
-                        }
-                        postKeyEventWithFlags(keyCode: key, keyDown: false)
+                        postKeyEventWithFlags(keyCode: key, keyDown: false, flags: currentModifierFlags)
+                        updateModifierFlags(for: key, isPress: false)
                     } else {
                         print("Unknown key: \(value)")
                     }
                 case "reset":
                     ng.reset()
                     pressedKeys.removeAll()
+                    currentModifierFlags = []
                 case "character":
                     // 未変換を確定
                     tapKey(keyCode: kVK_JIS_Eisu)
@@ -255,10 +266,9 @@ class KeyRemapper {
                     
                     tapKey(keyCode: kVK_JIS_Kana)
                 default:
-                    print("no action")
+                    print("Unknown action: \(mode)")
                 }
             }
         }
-        flags = []
     }
 }
