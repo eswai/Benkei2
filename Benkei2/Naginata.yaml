@@ -1298,17 +1298,26 @@
   douji: [L]
   type:
   # {改行}{Space}+{Home}^x{BS} コピークリア
-    - tap: Return
+    # - tap: Return
+    # - tap: Space
+    # - press: Shift
+    # - press: Control
+    # - tap: A
+    # - release: Control
+    # - release: Shift
+    # - press: Command
+    # - tap: X
+    # - release: Command
+    # - tap: Delete
     - tap: Space
     - press: Shift
     - press: Control
-    - tap: A
+    - tap: B
     - release: Control
     - release: Shift
     - press: Command
     - tap: X
     - release: Command
-    - tap: Delete
 - mae: [C, V]
   douji: [Semicolon]
   type:
