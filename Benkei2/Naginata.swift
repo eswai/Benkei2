@@ -144,44 +144,58 @@ class Naginata {
 
         var noc = 0
 
-        // skc = set(map(lambda x: :NG_SFT if x == :NG_SFT2 else x, keys))
-        if [kVK_Space, kVK_Return].contains(keys[0]) && keys.count == 1 {
-            noc = 1
-        } else if [kVK_Space, kVK_Return].contains(keys[0]) && keys.count > 1 {
-            let skc = Set(keys[1...])
-            for k in NGDIC {
-                if k.0.contains(kVK_Space) && Set(k.1) == skc {
-                    noc += 1
-                    if noc > 1 {
-                        break
-                    }
-                }
-            }
-        } else {
-            var f = true
-            for rs in HENSHU {
-                if keys.count == 3 && Set(keys[0..<2]) == rs {
-                    for k in NGDIC {
-                        if rs == Set(k.0) && Set([keys[2]]) == Set(k.1) {
-                            noc = 1
-                            f = false
-                            break
-                        }
-                    }
-                    if !f { break }
-                }
-            }
-            if f {
-                let skc = Set(keys)
-                for k in NGDIC {
-                    if k.0.union(k.1) == skc {
+        switch keys.count {
+            case 1:
+                // 1, 0
+                NGDIC.forEach { k in
+                    if k.0 == Set(keys) {
                         noc += 1
-                        if noc > 1 {
-                            break
-                        }
                     }
                 }
-            }
+                // 0, 1
+                NGDIC.forEach { k in
+                    if k.0.isEmpty && k.1 == Set(keys) {
+                        noc += 1
+                    }
+                }
+            case 2:
+                // 2, 0
+                NGDIC.forEach { k in
+                    if k.0 == Set(keys) {
+                        noc += 1
+                    }
+                }
+                // 1, 1
+                NGDIC.forEach { k in
+                    if k.0 == Set(keys[0..<1]) && k.1 == Set(keys[1...]) {
+                        noc += 1
+                    }
+                }
+                // 0, 2
+                NGDIC.forEach { k in
+                    if k.0.isEmpty && k.1 == Set(keys) {
+                        noc += 1
+                    }
+                }
+            default:
+                // 2, 1
+                NGDIC.forEach { k in
+                    if k.0 == Set(keys[0..<2]) && k.1 == Set(keys[2...]) {
+                        noc += 1
+                    }
+                }
+                // 1, 2
+                NGDIC.forEach { k in
+                    if k.0 == Set(keys[0..<1])  && k.1 == Set(keys[1...]) {
+                        noc += 1
+                    }
+                }
+                // 0, 3
+                NGDIC.forEach { k in
+                    if k.0.isEmpty && k.1 == Set(keys) {
+                        noc += 1
+                    }
+                }
         }
 
         print("NG num of matches \(noc)")
