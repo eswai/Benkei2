@@ -12,17 +12,9 @@ class Naginata {
 
     let NGDIC: [(Set<Int>, Set<Int>, [[String: String]])]
 
-    let NGSHIFT1: [Set<Int>] = [
-        [kVK_Space], [kVK_Return], [kVK_ANSI_D, kVK_ANSI_F], [kVK_ANSI_C, kVK_ANSI_V], [kVK_ANSI_J, kVK_ANSI_K], [kVK_ANSI_M, kVK_ANSI_Comma]
-    ]
-
-    let NGSHIFT2: [Set<Int>] = [
+    let NGSHIFT: [Set<Int>] = [
         [kVK_ANSI_D, kVK_ANSI_F], [kVK_ANSI_C, kVK_ANSI_V], [kVK_ANSI_J, kVK_ANSI_K], [kVK_ANSI_M, kVK_ANSI_Comma],
         [kVK_Space], [kVK_Return], [kVK_ANSI_F], [kVK_ANSI_V], [kVK_ANSI_J], [kVK_ANSI_M]
-    ]
-
-    let HENSHU: [Set<Int>] = [
-        [kVK_ANSI_D, kVK_ANSI_F], [kVK_ANSI_C, kVK_ANSI_V], [kVK_ANSI_J, kVK_ANSI_K], [kVK_ANSI_M, kVK_ANSI_Comma]
     ]
 
     var pressedKeys: Set<Int> = []
@@ -79,7 +71,7 @@ class Naginata {
         // あいあう　あいう x
         // ぎょあう　ぎょう x
         // どか どが x 先にFがc/oされてJが残される
-        for rs in NGSHIFT2 {
+        for rs in NGSHIFT {
             let rskc = rs + nginput.last!
             // rskc.append(kc)
             // じょじょ よを先に押すと連続シフトしない x
@@ -144,58 +136,44 @@ class Naginata {
 
         var noc = 0
 
-        switch keys.count {
-            case 1:
-                // 1, 0
-                NGDIC.forEach { k in
+        NGDIC.forEach { k in
+            switch keys.count {
+                case 1:
+                    // 1, 0
                     if k.0 == Set(keys) {
                         noc += 1
                     }
-                }
-                // 0, 1
-                NGDIC.forEach { k in
+                    // 0, 1
                     if k.0.isEmpty && k.1 == Set(keys) {
                         noc += 1
                     }
-                }
-            case 2:
-                // 2, 0
-                NGDIC.forEach { k in
+                case 2:
+                    // 2, 0
                     if k.0 == Set(keys) {
                         noc += 1
                     }
-                }
-                // 1, 1
-                NGDIC.forEach { k in
+                    // 1, 1
                     if k.0 == Set(keys[0..<1]) && k.1 == Set(keys[1...]) {
                         noc += 1
                     }
-                }
-                // 0, 2
-                NGDIC.forEach { k in
+                    // 0, 2
                     if k.0.isEmpty && k.1 == Set(keys) {
                         noc += 1
                     }
-                }
-            default:
-                // 2, 1
-                NGDIC.forEach { k in
+                default:
+                    // 2, 1
                     if k.0 == Set(keys[0..<2]) && k.1 == Set(keys[2...]) {
                         noc += 1
                     }
-                }
-                // 1, 2
-                NGDIC.forEach { k in
+                    // 1, 2
                     if k.0 == Set(keys[0..<1])  && k.1 == Set(keys[1...]) {
                         noc += 1
                     }
-                }
-                // 0, 3
-                NGDIC.forEach { k in
+                    // 0, 3
                     if k.0.isEmpty && k.1 == Set(keys) {
                         noc += 1
                     }
-                }
+            }
         }
 
         print("NG num of matches \(noc)")
@@ -207,62 +185,48 @@ class Naginata {
 
         var noc = 0
 
-        switch keys.count {
-            case 1:
-                // 1, 0
-                NGDIC.forEach { k in
+        NGDIC.forEach { k in
+            switch keys.count {
+                case 1:
+                    // 1, 0
                     if k.0.isSuperset(of: Set(keys)) {
                         noc += 1
                     }
-                }
-                // 0, 1
-                NGDIC.forEach { k in
+                    // 0, 1
                     if k.0.isEmpty && k.1.isSuperset(of: Set(keys)) {
                         noc += 1
                     }
-                }
-            case 2:
-                // 2, 0
-                NGDIC.forEach { k in
+                case 2:
+                    // 2, 0
                     if k.0 == Set(keys) {
                         noc += 1
                     }
-                }
-                // 1, 1
-                NGDIC.forEach { k in
+                    // 1, 1
                     if k.0 == Set(keys[0..<1]) && k.1.isSuperset(of: Set(keys[1...])) {
                         noc += 1
                     }
-                }
-                // 0, 2
-                NGDIC.forEach { k in
+                    // 0, 2
                     if k.0.isEmpty && k.1.isSuperset(of: Set(keys)) {
-                        if keys.count < 2 {
+                        if k.1.count > 2 {
                             noc = 2
                         } else {
                             noc += 1
                         }
                     }
-                }
-            default:
-                // 2, 1
-                NGDIC.forEach { k in
+                default:
+                    // 2, 1
                     if k.0 == Set(keys[0..<2]) && k.1.isSuperset(of: Set(keys[2...])) {
                         noc += 1
                     }
-                }
-                // 1, 2
-                NGDIC.forEach { k in
+                    // 1, 2
                     if k.0 == Set(keys[0..<1])  && k.1.isSuperset(of: Set(keys[1...])) {
                         noc += 1
                     }
-                }
-                // 0, 3
-                NGDIC.forEach { k in
+                    // 0, 3
                     if k.0.isEmpty && k.1.isSuperset(of: Set(keys)) {
                         noc += 1
                     }
-                }
+            }
         }
 
         print("NG num of candidates \(noc)")
