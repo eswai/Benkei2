@@ -84,7 +84,7 @@ class Naginata {
             // rskc.append(kc)
             // じょじょ よを先に押すと連続シフトしない x
             // Falseにすると、がる が　がある になる x
-            if !rs.contains(kc) && rs.isSubset(of: pressedKeys) && numberOfMatches(keys: rskc) > 0 {
+            if !rs.contains(kc) && !nginput.last!.contains(rs) && rs.isSubset(of: pressedKeys) && numberOfMatches(keys: rskc) > 0 {
                 nginput[nginput.count - 1] = rskc
                 break
             }
@@ -193,54 +193,62 @@ class Naginata {
 
         var noc = 0
 
-        // シフトの単打
-        if keys.count == 1 && [kVK_Space, kVK_Return].contains(keys[0]) {
-            noc = 2
-        // 編集モードの途中
-        } else if keys.count == 2 && NGSHIFT1.contains(Set(keys)) {
-            noc = 2
-        // シフトの途中
-        } else if [kVK_Space, kVK_Return].contains(keys[0]) && keys.count > 1 {
-            let skc = Set(keys[1...])
-            for k in NGDIC {
-                // if k.0.contains(kVK_Space) && Set(k.1).isSubset(of: skc) {  // <=だけ違う
-                if k.0.contains(kVK_Space) && skc.isSubset(of: Set(k.1)) {  // <=だけ違う
-                    noc += 1
-                    if noc > 1 {
-                        break
+        switch keys.count {
+            case 1:
+                // 1, 0
+                NGDIC.forEach { k in
+                    if k.0.isSuperset(of: Set(keys)) {
+                        noc += 1
                     }
                 }
-            }
-        } else {
-            // 編集モード
-            var f = true
-            for rs in HENSHU {
-                if keys.count == 3 && Set(keys[0..<2]) == rs {
-                    for k in NGDIC {
-                        if rs == Set(k.0) && Set([keys[2]]) == Set(k.1) {
-                            noc = 1
-                            f = false
-                            break
+                // 0, 1
+                NGDIC.forEach { k in
+                    if k.0.isEmpty && k.1.isSuperset(of: Set(keys)) {
+                        noc += 1
+                    }
+                }
+            case 2:
+                // 2, 0
+                NGDIC.forEach { k in
+                    if k.0 == Set(keys) {
+                        noc += 1
+                    }
+                }
+                // 1, 1
+                NGDIC.forEach { k in
+                    if k.0 == Set(keys[0..<1]) && k.1.isSuperset(of: Set(keys[1...])) {
+                        noc += 1
+                    }
+                }
+                // 0, 2
+                NGDIC.forEach { k in
+                    if k.0.isEmpty && k.1.isSuperset(of: Set(keys)) {
+                        if keys.count < 2 {
+                            noc = 2
+                        } else {
+                            noc += 1
                         }
                     }
-                    if !f { break }
                 }
-            }
-            // 同時押し、単打
-            if f {
-                let skc = Set(keys)
-                for k in NGDIC {
-                    let k01 = k.0.union(k.1)
-                    if skc == k01 {
+            default:
+                // 2, 1
+                NGDIC.forEach { k in
+                    if k.0 == Set(keys[0..<2]) && k.1.isSuperset(of: Set(keys[2...])) {
                         noc += 1
-                    } else if skc.isStrictSubset(of: k01) {
-                        noc = 2
-                    }
-                    if noc > 1 {
-                        break
                     }
                 }
-            }
+                // 1, 2
+                NGDIC.forEach { k in
+                    if k.0 == Set(keys[0..<1])  && k.1.isSuperset(of: Set(keys[1...])) {
+                        noc += 1
+                    }
+                }
+                // 0, 3
+                NGDIC.forEach { k in
+                    if k.0.isEmpty && k.1.isSuperset(of: Set(keys)) {
+                        noc += 1
+                    }
+                }
         }
 
         print("NG num of candidates \(noc)")
