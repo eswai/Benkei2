@@ -84,7 +84,7 @@ class Naginata {
             // rskc.append(kc)
             // じょじょ よを先に押すと連続シフトしない x
             // Falseにすると、がる が　がある になる x
-            if !rs.contains(kc) && !nginput.last!.contains(rs) && rs.isSubset(of: pressedKeys) && numberOfMatches(keys: rskc) > 0 {
+            if !rs.contains(kc) && !rs.isSubset(of: Set(nginput.last!)) && rs.isSubset(of: pressedKeys) && numberOfMatches(keys: rskc) > 0 {
                 nginput[nginput.count - 1] = rskc
                 break
             }
