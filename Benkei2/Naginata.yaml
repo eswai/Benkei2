@@ -887,18 +887,22 @@
 - mae: []
   douji: [T]
   type:
+    - repeat: true
     - press: Control
-    - tap: N
+    - press: N
+    - release: N
     - release: Control
 - mae: []
   douji: [Y]
   type:
+    - repeat: true
     - press: Control
     - tap: P
     - release: Control
 - mae: [Space]
   douji: [T]
   type:
+    - repeat: true
     - press: Shift
     - press: Control
     - tap: N
@@ -907,6 +911,7 @@
 - mae: [Space]
   douji: [Y]
   type:
+    - repeat: true
     - press: Shift
     - press: Control
     - tap: P
@@ -935,9 +940,6 @@
   douji: [Q]
   type:
   # ^{End} 最新の位置へ
-    - press: Command
-    - tap: LeftArrow
-    - release: Command
     - press: Command
     - tap: DownArrow
     - release: Command
@@ -1055,11 +1057,13 @@
   douji: [J]
   type:
   # {↑}
+    - repeat: true
     - tap: UpArrow
 - mae: [D, F]
   douji: [K]
   type:
   # +{↑}
+    - repeat: true
     - press: Shift
     - tap: UpArrow
     - release: Shift
@@ -1094,11 +1098,13 @@
   douji: [M]
   type:
   # {↓}
+    - repeat: true
     - tap: DownArrow
 - mae: [D, F]
   douji: [Comma]
   type:
   # +{↓}
+    - repeat: true
     - press: Shift
     - tap: DownArrow
     - release: Shift
@@ -1244,7 +1250,7 @@
 - mae: [C, V]
   douji: [Y]
   type:
-  # +{Home}
+  # +{Home}　動作しない
     - press: Shift
     - press: Control
     - tap: A
@@ -1288,11 +1294,13 @@
   douji: [J]
   type:
   # {←}
+    - repeat: true
     - tap: LeftArrow
 - mae: [C, V]
   douji: [K]
   type:
   # {→}
+    - repeat: true
     - tap: RightArrow
 - mae: [C, V]
   douji: [L]
@@ -1340,6 +1348,7 @@
   douji: [M]
   type:
   # +{←}
+    - repeat: true
     - press: Shift
     - tap: LeftArrow
     - release: Shift
@@ -1347,6 +1356,7 @@
   douji: [Comma]
   type:
   # +{→}
+    - repeat: true
     - press: Shift
     - tap: RightArrow
     - release: Shift

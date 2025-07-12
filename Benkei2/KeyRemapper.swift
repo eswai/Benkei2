@@ -10,6 +10,7 @@ class KeyRemapper {
     private var ng: Naginata
     private var pressedKeys: Set<Int> = []
     private var keyRepeat = false
+    private var allowRepeat: Bool = false // キーリピートを許可するかどうか
     
     // H+J同時押し用の状態管理
     private var hjbuf: Int = -1 // 同時押し判定用のバッファ
@@ -91,6 +92,7 @@ class KeyRemapper {
             }
         } else if type == .keyUp {
             keyRepeat = false
+            allowRepeat = false
             if pressedKeys.contains(originalKeyCode) {
                 pressedKeys.remove(originalKeyCode)
             } else {
@@ -134,7 +136,7 @@ class KeyRemapper {
         }
         
         if mode == "ja" && (type == .keyDown || type == .keyUp) && ng.isNaginata(kc: originalKeyCode) {
-            if keyRepeat {
+            if !allowRepeat && keyRepeat {
                 return nil
             }
             if type == .keyUp {
@@ -242,6 +244,12 @@ class KeyRemapper {
                         updateModifierFlags(for: key, isPress: false)
                     } else {
                         print("Unknown key: \(value)")
+                    }
+                case "repeat":
+                    if value == "true" {
+                        allowRepeat = true
+                    } else {
+                        allowRepeat = false
                     }
                 case "reset":
                     ng.reset()
