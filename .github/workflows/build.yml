@@ -22,13 +22,49 @@ jobs:
         run: |
           xcodebuild -project Benkei2.xcodeproj -scheme Benkei2 -configuration Release -derivedDataPath build
 
-      - name: Archive .app
+      - name: Code sign the app (if needed)
+        run: |
+          # Remove quarantine attributes that prevent execution
+          find build/Build/Products/Release/Benkei2.app -type f -exec xattr -d com.apple.quarantine {} \; 2>/dev/null || true
+          
+      - name: Create distributable package
         run: |
           mkdir -p output
           cp -R build/Build/Products/Release/Benkei2.app output/
+          # Make the executable properly executable
+          chmod +x output/Benkei2.app/Contents/MacOS/Benkei2
+          # Create a simple launcher script for easier execution
+          cat > output/run-benkei2.sh << 'EOF'
+          #!/bin/bash
+          cd "$(dirname "$0")"
+          open Benkei2.app
+          EOF
+          chmod +x output/run-benkei2.sh
+          # Create installation instructions
+          cat > output/README.txt << 'EOF'
+          Benkei2 - macOS Application
 
+          Installation Instructions:
+          1. Extract this zip file to your Applications folder or any location you prefer
+          2. To run the application:
+             - Double-click on Benkei2.app, OR
+             - Double-click on run-benkei2.sh (if Benkei2.app doesn't open directly)
+          
+          Note: If macOS shows a security warning, you may need to:
+          1. Go to System Preferences > Security & Privacy
+          2. Click "Open Anyway" for Benkei2
+          
+          Or alternatively, run the following command in Terminal:
+          xattr -d com.apple.quarantine /path/to/Benkei2.app
+          EOF
+          
+      - name: Create zip package
+        run: |
+          cd output
+          zip -r ../Benkei2-macOS.zip .
+          
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Benkei2-app
-          path: output/Benkei2.app
+          name: Benkei2-macOS
+          path: Benkei2-macOS.zip
