@@ -1,0 +1,34 @@
+name: Build macOS App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Xcode version
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest
+
+      - name: Build app
+        run: |
+          xcodebuild -project Benkei2.xcodeproj -scheme Benkei2 -configuration Release -derivedDataPath build
+
+      - name: Archive .app
+        run: |
+          mkdir -p output
+          cp -R build/Build/Products/Release/Benkei2.app output/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Benkei2-app
+          path: output/Benkei2.app
