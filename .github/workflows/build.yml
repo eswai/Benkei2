@@ -42,20 +42,25 @@ jobs:
           chmod +x output/run-benkei2.sh
           # Create installation instructions
           cat > output/README.txt << 'EOF'
-          Benkei2 - macOS Application
+          Benkei2 - macOSアプリケーション
 
-          Installation Instructions:
-          1. Extract this zip file to your Applications folder or any location you prefer
-          2. To run the application:
-             - Double-click on Benkei2.app, OR
-             - Double-click on run-benkei2.sh (if Benkei2.app doesn't open directly)
+          インストール手順:
+          1. このzipファイルをApplicationsフォルダまたはお好みの場所に展開してください
+          2. アプリケーションを実行するには:
+             - Benkei2.appをダブルクリック、または
+             - Benkei2.appが直接開かない場合はrun-benkei2.shをダブルクリック
           
-          Note: If macOS shows a security warning, you may need to:
-          1. Go to System Preferences > Security & Privacy
-          2. Click "Open Anyway" for Benkei2
+          注意: macOSがセキュリティ警告を表示する場合は、以下の手順を実行してください:
+          1. システム環境設定 > セキュリティとプライバシー を開く
+          2. Benkei2に対して「このまま開く」をクリック
           
-          Or alternatively, run the following command in Terminal:
+          または、ターミナルで以下のコマンドを実行してください:
           xattr -d com.apple.quarantine /path/to/Benkei2.app
+
+          初回実行時にはアクセシビリティの許可が必要です。以下の手順に従ってください:
+          1. システム環境設定 > セキュリティとプライバシー > プライバシー タブを開く
+          2. 左側のリストから「アクセシビリティ」を選択
+          3. 右側のリストにBenkei2.appが表示されていることを確認し、チェックボックスをオンにする
           EOF
           
       - name: Create zip package
