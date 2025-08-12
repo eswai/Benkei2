@@ -114,9 +114,10 @@ class KeyRemapper {
                         return nil
                     } else {
                         tapKey(keyCode: hjbuf)
+                        tapKey(keyCode: originalKeyCode)
                         pressedKeys.remove(hjbuf)
                         hjbuf = -1
-                        return Unmanaged.passRetained(event)
+                        return nil
                     }
                 }
             } else if type == .keyUp {
