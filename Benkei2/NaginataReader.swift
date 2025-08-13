@@ -27,6 +27,11 @@ struct NaginataCommand: Decodable {
     }
 }
 
+struct ABCMapping: Decodable {
+    let kana_on: [String]?
+    let remap: [String: String]
+}
+
 class NaginataReader {
 
     static let keyCodeMap: Dictionary<String, Int> = [
@@ -184,6 +189,65 @@ class NaginataReader {
             return commands
         } catch {
             print("Error decoding YAML: \(error)")
+            return nil
+        }
+    }
+    
+    static func readABCKanaOnKeys(path: String) -> [Int]? {
+        guard let yamlString = try? String(contentsOfFile: path, encoding: .utf8) else {
+            print("Failed to read ABC.yaml file")
+            return nil
+        }
+        
+        guard let yamlData = yamlString.data(using: .utf8) else {
+            print("Failed to convert ABC.yaml to data")
+            return nil
+        }
+        
+        do {
+            let decoder = YAMLDecoder()
+            let abcMapping = try decoder.decode(ABCMapping.self, from: yamlData)
+            
+            guard let kanaOnKeys = abcMapping.kana_on else {
+                return nil
+            }
+            
+            // String → Int のキーコードに変換
+            return kanaOnKeys.compactMap { keyCodeMap[$0] }
+        } catch {
+            print("Error decoding ABC YAML for kana_on: \(error)")
+            return nil
+        }
+    }
+    
+    static func readABCMapping(path: String) -> [Int: Int]? {
+        guard let yamlString = try? String(contentsOfFile: path, encoding: .utf8) else {
+            print("Failed to read ABC.yaml file")
+            return nil
+        }
+        
+        guard let yamlData = yamlString.data(using: .utf8) else {
+            print("Failed to convert ABC.yaml to data")
+            return nil
+        }
+        
+        do {
+            let decoder = YAMLDecoder()
+            let abcMapping = try decoder.decode(ABCMapping.self, from: yamlData)
+            
+            // String → Int のキーコードマッピングに変換
+            var result: [Int: Int] = [:]
+            
+            for (fromKey, toKey) in abcMapping.remap {
+                if let fromKeyCode = keyCodeMap[fromKey],
+                   let toKeyCode = keyCodeMap[toKey] {
+                    result[fromKeyCode] = toKeyCode
+                }
+            }
+            
+            return result
+        } catch {
+            print("Error decoding ABC YAML: \(error)")
             return nil
         }
     }

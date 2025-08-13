@@ -207,6 +207,7 @@ class Naginata {
                     }
                     // 0, 2
                     if k.0.isEmpty && k.1.isSuperset(of: Set(keys)) {
+                        // 3キー押す前に、シェ、チェを確定しない
                         if k.1.count > 2 {
                             noc = 2
                         } else {

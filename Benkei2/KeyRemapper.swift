@@ -12,20 +12,24 @@ class KeyRemapper {
     private var keyRepeat = false
     private var allowRepeat: Bool = false // キーリピートを許可するかどうか
     
-    // H+J同時押し用の状態管理
+    // kana_on同時押し用の状態管理
     private var hjbuf: Int = -1 // 同時押し判定用のバッファ
 
-    // Updated key mapping dictionaries using kVK_ANSI_* constants with explicit casting
-    let englishMapping: [Int: [Int]] = [
-        // one-to-one mapping
-        kVK_ANSI_A: [kVK_ANSI_B],
-        // one-to-many mapping
-        // kVK_ANSI_S: [kVK_ANSI_D, kVK_ANSI_F]
-    ]
+    // ABC配列キーマッピング
+    private var abcMapping: [Int: Int] = [:]
+    
+    // ABC.yamlのkana_onで定義されたキーコード
+    private var kanaOnKeys: [Int] = []
 
     private init() {
         let yamlPath = Bundle.main.path(forResource: "Naginata", ofType: "yaml")!
         ng = Naginata(filePath: yamlPath)!
+        
+        // ABC.yamlを読み込む
+        if let abcPath = Bundle.main.path(forResource: "ABC", ofType: "yaml") {
+            abcMapping = NaginataReader.readABCMapping(path: abcPath) ?? [:]
+            kanaOnKeys = NaginataReader.readABCKanaOnKeys(path: abcPath) ?? []
+        }
     }
 
     func start() {
@@ -101,20 +105,32 @@ class KeyRemapper {
         }
 
         if mode == "en" {
+            // ABC配列のキーマッピングを取得（マッピングがない場合は元のキーコードを使用）
+            let targetKeyCode = abcMapping[originalKeyCode] ?? originalKeyCode
+            
+            // kana_on同時押しの処理（マッピング後のキーコードで判定）
             if type == .keyDown {
                 if hjbuf == -1 {
-                    if originalKeyCode == kVK_ANSI_H || originalKeyCode == kVK_ANSI_J {
-                        hjbuf = originalKeyCode;
+                    if kanaOnKeys.count >= 2 && (targetKeyCode == kanaOnKeys[0] || targetKeyCode == kanaOnKeys[1]) {
+                        hjbuf = originalKeyCode; // 元のキーコードを保存
                         return nil;
+                    } else {
+                        // マッピングされたキーを送信
+                        postKeyEvent(keyCode: targetKeyCode, keyDown: true)
+                        return nil
                     }
                 } else {
-                    if hjbuf + originalKeyCode == kVK_ANSI_H + kVK_ANSI_J {
+                    let hjbufMapped = abcMapping[hjbuf] ?? hjbuf
+                    if hjbufMapped + targetKeyCode == kanaOnKeys[0] + kanaOnKeys[1] {
                         sendJISKanaKey()
                         hjbuf = -1
                         return nil
                     } else {
-                        tapKey(keyCode: hjbuf)
-                        tapKey(keyCode: originalKeyCode)
+                        // バッファのキーとマッピングされたキーを両方送信
+                        let hjbufTargetKeyCode = abcMapping[hjbuf] ?? hjbuf
+                        postKeyEvent(keyCode: hjbufTargetKeyCode, keyDown: true)
+                        postKeyEvent(keyCode: hjbufTargetKeyCode, keyDown: false)
+                        postKeyEvent(keyCode: targetKeyCode, keyDown: true)
                         pressedKeys.remove(hjbuf)
                         hjbuf = -1
                         return nil
@@ -122,9 +138,15 @@ class KeyRemapper {
                 }
             } else if type == .keyUp {
                 if hjbuf > -1 && hjbuf == originalKeyCode {
-                    tapKey(keyCode: hjbuf)
+                    let hjbufTargetKeyCode = abcMapping[hjbuf] ?? hjbuf
+                    postKeyEvent(keyCode: hjbufTargetKeyCode, keyDown: true)
+                    postKeyEvent(keyCode: hjbufTargetKeyCode, keyDown: false)
                     pressedKeys.remove(hjbuf)
                     hjbuf = -1
+                    return nil
+                } else {
+                    // マッピングされたキーのキーアップを送信
+                    postKeyEvent(keyCode: targetKeyCode, keyDown: false)
                     return nil
                 }
             }
