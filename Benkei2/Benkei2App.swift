@@ -12,9 +12,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // Status bar icon initialization
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "keyboard", accessibilityDescription: "Key Remapper")
-        }
+        updateStatusBarIcon()
         
         let menu = NSMenu()
         // Toggle menu: title shows target action (i.e. what to switch to)
@@ -32,6 +30,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         KeyRemapper.shared.isEnabled.toggle()
         if let menu = statusItem.menu, let toggleItem = menu.item(at: 0) {
             toggleItem.title = KeyRemapper.shared.isEnabled ? "無効" : "有効"
+        }
+        updateStatusBarIcon()
+    }
+    
+    func updateStatusBarIcon() {
+        if let button = statusItem.button {
+            let imageName = KeyRemapper.shared.isEnabled ? "Benkei_active" : "Benkei_inactive"
+            button.image = NSImage(named: imageName)
+            button.image?.isTemplate = true
         }
     }
     
