@@ -22,11 +22,14 @@ class KeyRemapper {
     private var kanaOnKeys: [Int] = []
 
     private init() {
-        let yamlPath = Bundle.main.path(forResource: "Naginata", ofType: "yaml")!
+        // 設定ファイルを ~/.config/benkei から読み込み
+        guard let yamlPath = ConfigManager.shared.getNaginataConfigPath() else {
+            fatalError("Naginata.yaml not found")
+        }
         ng = Naginata(filePath: yamlPath)!
         
         // ABC.yamlを読み込む
-        if let abcPath = Bundle.main.path(forResource: "ABC", ofType: "yaml") {
+        if let abcPath = ConfigManager.shared.getABCConfigPath() {
             abcMapping = NaginataReader.readABCMapping(path: abcPath) ?? [:]
             kanaOnKeys = NaginataReader.readABCKanaOnKeys(path: abcPath) ?? []
         }

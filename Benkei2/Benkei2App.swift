@@ -6,6 +6,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+        
+        // 設定ディレクトリを初期化（初回起動時に ~/.config/benkei を作成し、設定ファイルをコピー）
+        ConfigManager.shared.initializeConfigDirectory()
+        
         // Status bar icon initialization
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
