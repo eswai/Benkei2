@@ -22,7 +22,7 @@ class KeyRemapper {
     private var kanaOnKeys: [Int] = []
 
     private init() {
-        // 設定ファイルを ~/.config/benkei から読み込み
+        // 設定ファイルを ~/Library/Containers/jp.eswai.Benkei2/Data/config から読み込み
         guard let yamlPath = ConfigManager.shared.getNaginataConfigPath() else {
             fatalError("Naginata.yaml not found")
         }
