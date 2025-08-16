@@ -75,12 +75,13 @@ class KeyRemapper {
         }
         let sourceIDString = Unmanaged<CFString>.fromOpaque(sourceID).takeUnretainedValue() as String
         
-        // print("Current Input Source ID: \(sourceIDString)")
+        print("Current Input Source ID: \(sourceIDString)")
         return kanaMethods.contains(sourceIDString) ? "ja" : "en"
     }
 
     func handle(event: CGEvent, type: CGEventType) -> Unmanaged<CGEvent>? {
         guard isEnabled else { return Unmanaged.passRetained(event) }
+        guard type == .keyDown || type == .keyUp else { return Unmanaged.passRetained(event) }
 
         if event.getIntegerValueField(.eventSourceUserData) == 1 {
             return Unmanaged.passRetained(event)
@@ -89,6 +90,19 @@ class KeyRemapper {
         let mode = getCurrentInputMode()
         let originalKeyCode = Int(event.getIntegerValueField(.keyboardEventKeycode))
 
+        // kVK_ANSI_A to kVK_Escape
+        guard originalKeyCode >= 0 && originalKeyCode <= 0x35 else {
+            return Unmanaged.passRetained(event)
+        }
+
+        // 修飾キーが押されている場合は処理をスキップ
+        let flags = event.flags
+        if flags.contains(.maskCommand) || flags.contains(.maskShift) || flags.contains(.maskControl) || flags.contains(.maskAlternate) {
+            let targetKeyCode = abcMapping[originalKeyCode] ?? originalKeyCode
+            postKeyEvent(keyCode: targetKeyCode, keyDown: (type == .keyDown))
+            return nil
+        }
+        
         // キーリピートが無効
         if type == .keyDown {
             if pressedKeys.contains(originalKeyCode) {
@@ -154,24 +168,24 @@ class KeyRemapper {
                 }
             }
         }
-        
-        // 修飾キーが押されている場合は処理をスキップ
-        let flags = event.flags
-        if flags.contains(.maskCommand) || flags.contains(.maskShift) || flags.contains(.maskControl) || flags.contains(.maskAlternate) {
-            return Unmanaged.passRetained(event)
-        }
-        
-        if mode == "ja" && (type == .keyDown || type == .keyUp) && ng.isNaginata(kc: originalKeyCode) {
-            if !allowRepeat && keyRepeat {
-                return nil
-            }
-            if type == .keyUp {
-                let targetKeys = ng.ngRelease(kc: originalKeyCode)
-                handleTargetKeys(targetKeys)
-                return nil
-            } else if type == .keyDown {
-                let targetKeys = ng.ngPress(kc: originalKeyCode)
-                handleTargetKeys(targetKeys)
+
+        if mode == "ja" {
+            if ng.isNaginata(kc: originalKeyCode) {
+                if !allowRepeat && keyRepeat {
+                    return nil
+                }
+                if type == .keyUp {
+                    let targetKeys = ng.ngRelease(kc: originalKeyCode)
+                    handleTargetKeys(targetKeys)
+                    return nil
+                } else if type == .keyDown {
+                    let targetKeys = ng.ngPress(kc: originalKeyCode)
+                    handleTargetKeys(targetKeys)
+                    return nil
+                }
+            } else {
+                let targetKeyCode = abcMapping[originalKeyCode] ?? originalKeyCode
+                postKeyEvent(keyCode: targetKeyCode, keyDown: (type == .keyDown))
                 return nil
             }
         }
