@@ -4,9 +4,16 @@ import AppKit
 
 class KeyRemapper {
     static let shared = KeyRemapper()
+    static let statusChangedNotification = Notification.Name("KeyRemapperStatusChanged")
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
-    var isEnabled: Bool = true
+    private(set) var isEnabled: Bool = true {
+        didSet {
+            if oldValue != isEnabled {
+                NotificationCenter.default.post(name: KeyRemapper.statusChangedNotification, object: nil)
+            }
+        }
+    }
     private var ng: Naginata
     private var pressedKeys: Set<Int> = []
     private var keyRepeat = false
@@ -33,6 +40,15 @@ class KeyRemapper {
             abcMapping = NaginataReader.readABCMapping(path: abcPath) ?? [:]
             kanaOnKeys = NaginataReader.readABCKanaOnKeys(path: abcPath) ?? []
         }
+    }
+
+    func setEnabled(_ enabled: Bool) {
+        guard isEnabled != enabled else { return }
+        isEnabled = enabled
+    }
+
+    func toggleEnabled() {
+        setEnabled(!isEnabled)
     }
 
     func start() {
@@ -80,23 +96,29 @@ class KeyRemapper {
     }
 
     func handle(event: CGEvent, type: CGEventType) -> Unmanaged<CGEvent>? {
-        guard isEnabled else { return Unmanaged.passRetained(event) }
         guard type == .keyDown || type == .keyUp else { return Unmanaged.passRetained(event) }
 
         if event.getIntegerValueField(.eventSourceUserData) == 1 {
             return Unmanaged.passRetained(event)
         }
 
-        let mode = getCurrentInputMode()
         let originalKeyCode = Int(event.getIntegerValueField(.keyboardEventKeycode))
+        let flags = event.flags
+
+        if handleToggleShortcut(for: originalKeyCode, flags: flags, type: type) {
+            return nil
+        }
+
+        guard isEnabled else { return Unmanaged.passRetained(event) }
 
         // kVK_ANSI_A to kVK_Escape
         guard originalKeyCode >= 0 && originalKeyCode <= 0x35 else {
             return Unmanaged.passRetained(event)
         }
 
+        let mode = getCurrentInputMode()
+
         // 修飾キーが押されている場合は処理をスキップ
-        let flags = event.flags
         if flags.contains(.maskCommand) || flags.contains(.maskShift) || flags.contains(.maskControl) || flags.contains(.maskAlternate) {
             let targetKeyCode = abcMapping[originalKeyCode] ?? originalKeyCode
             postKeyEvent(keyCode: targetKeyCode, keyDown: (type == .keyDown))
@@ -317,6 +339,21 @@ class KeyRemapper {
                     print("Unknown action: \(mode)")
                 }
             }
+        }
+    }
+    private func handleToggleShortcut(for keyCode: Int, flags: CGEventFlags, type: CGEventType) -> Bool {
+        guard type == .keyDown else { return false }
+        let usesShiftControl = flags.contains(.maskShift) && flags.contains(.maskControl)
+        guard usesShiftControl else { return false }
+        switch keyCode {
+        case kVK_ANSI_1:
+            setEnabled(true)
+            return true
+        case kVK_ANSI_0:
+            setEnabled(false)
+            return true
+        default:
+            return false
         }
     }
 }

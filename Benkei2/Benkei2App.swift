@@ -3,6 +3,7 @@ import AppKit
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem!
+    private var toggleMenuItem: NSMenuItem?
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -10,28 +11,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // 設定ディレクトリを初期化（初回起動時に ~/Library/Containers/jp.eswai.Benkei2/Data/config を作成し、設定ファイルをコピー）
         ConfigManager.shared.initializeConfigDirectory()
         
+        NotificationCenter.default.addObserver(self, selector: #selector(remapperStatusChanged(_:)), name: KeyRemapper.statusChangedNotification, object: nil)
+
         // Status bar icon initialization
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        configureStatusMenu()
         updateStatusBarIcon()
-        
-        let menu = NSMenu()
-        // Toggle menu: title shows target action (i.e. what to switch to)
-        let toggleTitle = KeyRemapper.shared.isEnabled ? "無効" : "有効"
-        menu.addItem(withTitle: toggleTitle, action: #selector(toggleEnabled), keyEquivalent: "")
-        menu.addItem(NSMenuItem.separator())
-        menu.addItem(withTitle: "終了", action: #selector(terminate), keyEquivalent: "q")
-        statusItem.menu = menu
         
         // Start key remapping
         KeyRemapper.shared.start()
     }
     
     @objc func toggleEnabled() {
-        KeyRemapper.shared.isEnabled.toggle()
-        if let menu = statusItem.menu, let toggleItem = menu.item(at: 0) {
-            toggleItem.title = KeyRemapper.shared.isEnabled ? "無効" : "有効"
-        }
-        updateStatusBarIcon()
+        KeyRemapper.shared.toggleEnabled()
+        refreshRemapperUI()
     }
     
     func updateStatusBarIcon() {
@@ -40,6 +33,38 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             button.image = NSImage(named: imageName)
             button.image?.isTemplate = true
         }
+    }
+
+    private func configureStatusMenu() {
+        let menu = NSMenu()
+        let toggleItem = NSMenuItem(title: currentRemapperTitle(), action: #selector(toggleEnabled), keyEquivalent: "")
+        toggleItem.target = self
+        toggleMenuItem = toggleItem
+        menu.addItem(toggleItem)
+        menu.addItem(NSMenuItem.separator())
+        let quitItem = NSMenuItem(title: "終了", action: #selector(terminate), keyEquivalent: "q")
+        quitItem.target = self
+        menu.addItem(quitItem)
+        statusItem.menu = menu
+    }
+
+    private func currentRemapperTitle() -> String {
+        return KeyRemapper.shared.isEnabled ? "変換有効" : "変換オフ"
+    }
+
+    private func refreshRemapperUI() {
+        toggleMenuItem?.title = currentRemapperTitle()
+        updateStatusBarIcon()
+    }
+
+    @objc private func remapperStatusChanged(_ notification: Notification) {
+        DispatchQueue.main.async {
+            self.refreshRemapperUI()
+        }
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     @objc func terminate() {
