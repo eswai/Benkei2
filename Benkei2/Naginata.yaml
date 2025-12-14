@@ -1386,3 +1386,124 @@
     - tap: RightArrow
     - tap: RightArrow
     - release: Shift
+# ---------------------------------------- 固有名詞モード
+- mae: [U, I]
+  douji: [Q]
+  type:
+  - character:
+- mae: [U, I]
+  douji: [W]
+  type:
+  - character: 天空のファルコーン
+- mae: [U, I]
+  douji: [E]
+  type:
+  - character: 天ファル
+- mae: [U, I]
+  douji: [R]
+  type:
+  - character: 神山
+- mae: [U, I]
+  douji: [T]
+  type:
+  - character:
+- mae: [U, I]
+  douji: [A]
+  type:
+  - character:
+- mae: [U, I]
+  douji: [S]
+  type:
+  - character: ミツルギ
+- mae: [U, I]
+  douji: [D]
+  type:
+  - character: 韮澤
+- mae: [U, I]
+  douji: [F]
+  type:
+  - character: 上山
+- mae: [U, I]
+  douji: [G]
+  type:
+  - character: チャンプ
+- mae: [U, I]
+  douji: [Z]
+  type:
+  - character:
+- mae: [U, I]
+  douji: [X]
+  type:
+  - character:
+- mae: [U, I]
+  douji: [C]
+  type:
+  - character: 戸田
+- mae: [U, I]
+  douji: [V]
+  type:
+  - character:
+- mae: [U, I]
+  douji: [B]
+  type:
+  - character:
+- mae: [E, R]
+  douji: [Y]
+  type:
+  - character:
+- mae: [E, R]
+  douji: [U]
+  type:
+  - character:
+- mae: [E, R]
+  douji: [I]
+  type:
+  - character:
+- mae: [E, R]
+  douji: [O]
+  type:
+  - character: えりりん
+- mae: [E, R]
+  douji: [P]
+  type:
+  - character:
+- mae: [E, R]
+  douji: [H]
+  type:
+  - character: 山根
+- mae: [E, R]
+  douji: [J]
+  type:
+  - character:
+- mae: [E, R]
+  douji: [K]
+  type:
+  - character:
+- mae: [E, R]
+  douji: [L]
+  type:
+  - character:
+- mae: [E, R]
+  douji: [Semicolon]
+  type:
+  - character: 深町
+- mae: [E, R]
+  douji: [N]
+  type:
+  - character:
+- mae: [E, R]
+  douji: [M]
+  type:
+  - character:
+- mae: [E, R]
+  douji: [Comma]
+  type:
+  - character:
+- mae: [E, R]
+  douji: [Period]
+  type:
+  - character: 渡辺
+- mae: [E, R]
+  douji: [Slash]
+  type:
+  - character:
