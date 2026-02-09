@@ -105,12 +105,12 @@
     - tap: N
     - tap: I
 - mae: [Space]
-  douji: [W]
+  douji: [B]
   type:
     - tap: N
     - tap: U
 - mae: [Space]
-  douji: [Comma]
+  douji: [R]
   type:
     - tap: N
     - tap: E
@@ -165,12 +165,12 @@
     - tap: M
     - tap: I
 - mae: [Space]
-  douji: [B]
+  douji: [Comma]
   type:
     - tap: M
     - tap: U
 - mae: [Space]
-  douji: [R]
+  douji: [W]
   type:
     - tap: M
     - tap: E
@@ -1040,8 +1040,9 @@
 - mae: [D, F]
   douji: [P]
   type:
-  # +{Esc 2} 入力キャンセル
+  # +{Esc 3} 入力キャンセル
     - press: Shift
+    - tap: Escape
     - tap: Escape
     - tap: Escape
     - release: Shift
@@ -1137,6 +1138,7 @@
 - mae: [M, Comma]
   douji: [W]
   type:
+  # 　　　×　　　×　　　×{改行 2}
     - character: 　　　×　　　×　　　×
     - tap: Return
 - mae: [M, Comma]
@@ -1250,11 +1252,11 @@
 - mae: [C, V]
   douji: [Y]
   type:
-  # +{Home}　動作しない
+  # +{Home} Shift+Control+Aが日本語onで効かないアプリがあるので、Cmd+Leftで代用
     - press: Shift
-    - press: Control
-    - tap: A
-    - release: Control
+    - press: Command
+    - tap: LeftArrow
+    - release: Command
     - release: Shift
 - mae: [C, V]
   douji: [U]
@@ -1305,35 +1307,28 @@
 - mae: [C, V]
   douji: [L]
   type:
-  # {改行}{Space}+{Home}^x{BS} コピークリア
-    # - tap: Return
-    # - tap: Space
-    # - press: Shift
-    # - press: Control
-    # - tap: A
-    # - release: Control
-    # - release: Shift
-    # - press: Command
-    # - tap: X
-    # - release: Command
-    # - tap: Delete
-    - tap: Space
+  # +{← 7} 
     - press: Shift
-    - press: Control
-    - tap: B
-    - release: Control
+    - tap: LeftArrow
+    - tap: LeftArrow
+    - tap: LeftArrow
+    - tap: LeftArrow
+    - tap: LeftArrow
+    - tap: LeftArrow
+    - tap: LeftArrow
     - release: Shift
-    - press: Command
-    - tap: X
-    - release: Command
 - mae: [C, V]
   douji: [Semicolon]
   type:
-  # ^y
+  # +{→ 7}
     - press: Shift
-    - press: Command
-    - tap: Z
-    - release: Command
+    - tap: RightArrow
+    - tap: RightArrow
+    - tap: RightArrow
+    - tap: RightArrow
+    - tap: RightArrow
+    - tap: RightArrow
+    - tap: RightArrow
     - release: Shift
 - mae: [C, V]
   douji: [N]
@@ -1363,28 +1358,23 @@
 - mae: [C, V]
   douji: [Period]
   type:
-  # +{← 7}
+  # {End}+{Home} Shift+Control+Aが日本語onで効かないため、AとEを逆にしてる
+    - press: Control
+    - tap: A
+    - release: Control
     - press: Shift
-    - tap: LeftArrow
-    - tap: LeftArrow
-    - tap: LeftArrow
-    - tap: LeftArrow
-    - tap: LeftArrow
-    - tap: LeftArrow
-    - tap: LeftArrow
+    - press: Control
+    - tap: E
+    - release: Control
     - release: Shift
 - mae: [C, V]
   douji: [Slash]
   type:
-  # +{→ 7}
+  # ^y
     - press: Shift
-    - tap: RightArrow
-    - tap: RightArrow
-    - tap: RightArrow
-    - tap: RightArrow
-    - tap: RightArrow
-    - tap: RightArrow
-    - tap: RightArrow
+    - press: Command
+    - tap: Z
+    - release: Command
     - release: Shift
 # ---------------------------------------- 固有名詞モード
 - mae: [U, I]
@@ -1394,15 +1384,15 @@
 - mae: [U, I]
   douji: [W]
   type:
-  - character: 天空のファルコーン
+  - character: 狂天寺
 - mae: [U, I]
   douji: [E]
   type:
-  - character: 天ファル
+  - character: 
 - mae: [U, I]
   douji: [R]
   type:
-  - character: 神山
+  - character: 詩織
 - mae: [U, I]
   douji: [T]
   type:
@@ -1410,23 +1400,23 @@
 - mae: [U, I]
   douji: [A]
   type:
-  - character:
+  - character: 水村
 - mae: [U, I]
   douji: [S]
   type:
-  - character: ミツルギ
+  - character: 弥勒
 - mae: [U, I]
   douji: [D]
   type:
-  - character: 韮澤
+  - character: トシ
 - mae: [U, I]
   douji: [F]
   type:
-  - character: 上山
+  - character: 上條
 - mae: [U, I]
   douji: [G]
   type:
-  - character: チャンプ
+  - character:
 - mae: [U, I]
   douji: [Z]
   type:
@@ -1434,11 +1424,11 @@
 - mae: [U, I]
   douji: [X]
   type:
-  - character:
+  - character: ヒロシ
 - mae: [U, I]
   douji: [C]
   type:
-  - character: 戸田
+  - character:
 - mae: [U, I]
   douji: [V]
   type:
@@ -1462,19 +1452,19 @@
 - mae: [E, R]
   douji: [O]
   type:
-  - character: えりりん
+  - character:
 - mae: [E, R]
   douji: [P]
   type:
-  - character:
+  - character: ユカ
 - mae: [E, R]
   douji: [H]
   type:
-  - character: 山根
+  - character:
 - mae: [E, R]
   douji: [J]
   type:
-  - character:
+  - character: 悪魔
 - mae: [E, R]
   douji: [K]
   type:
@@ -1486,7 +1476,7 @@
 - mae: [E, R]
   douji: [Semicolon]
   type:
-  - character: 深町
+  - character:
 - mae: [E, R]
   douji: [N]
   type:
@@ -1494,7 +1484,7 @@
 - mae: [E, R]
   douji: [M]
   type:
-  - character:
+  - character: 田中
 - mae: [E, R]
   douji: [Comma]
   type:
@@ -1502,7 +1492,7 @@
 - mae: [E, R]
   douji: [Period]
   type:
-  - character: 渡辺
+  - character:
 - mae: [E, R]
   douji: [Slash]
   type:
