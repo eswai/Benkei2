@@ -18,15 +18,6 @@ class KeyRemapper {
     private var pressedKeys: Set<Int> = []
     private var keyRepeat = false
     private var allowRepeat: Bool = false // キーリピートを許可するかどうか
-    
-    // kana_on同時押し用の状態管理
-    private var hjbuf: Int = -1 // 同時押し判定用のバッファ
-
-    // ABC配列キーマッピング
-    private var abcMapping: [Int: Int] = [:]
-    
-    // ABC.yamlのkana_onで定義されたキーコード
-    private var kanaOnKeys: [Int] = []
 
     private init() {
         // 設定ファイルを ~/Library/Containers/jp.eswai.Benkei2/Data/config から読み込み
@@ -34,12 +25,6 @@ class KeyRemapper {
             fatalError("Naginata.yaml not found")
         }
         ng = Naginata(filePath: yamlPath)!
-        
-        // ABC.yamlを読み込む
-        if let abcPath = ConfigManager.shared.getABCConfigPath() {
-            abcMapping = NaginataReader.readABCMapping(path: abcPath) ?? [:]
-            kanaOnKeys = NaginataReader.readABCKanaOnKeys(path: abcPath) ?? []
-        }
     }
 
     func setEnabled(_ enabled: Bool) {
@@ -105,8 +90,20 @@ class KeyRemapper {
         let originalKeyCode = Int(event.getIntegerValueField(.keyboardEventKeycode))
         let flags = event.flags
 
+        // control + shift + 1で有効化、control + shift + 0で無効化
         if handleToggleShortcut(for: originalKeyCode, flags: flags, type: type) {
             return nil
+        }
+
+        let mode = getCurrentInputMode()
+
+        // 修飾キーが押されている場合は処理をスキップ
+        if flags.contains(.maskCommand) || flags.contains(.maskShift) || flags.contains(.maskControl) || flags.contains(.maskAlternate) {
+            if mode == "ja" {
+                postKeyEvent(keyCode: originalKeyCode, keyDown: (type == .keyDown))
+                return nil
+            }
+            return Unmanaged.passRetained(event)
         }
 
         guard isEnabled else { return Unmanaged.passRetained(event) }
@@ -116,15 +113,6 @@ class KeyRemapper {
             return Unmanaged.passRetained(event)
         }
 
-        let mode = getCurrentInputMode()
-
-        // 修飾キーが押されている場合は処理をスキップ
-        if flags.contains(.maskCommand) || flags.contains(.maskShift) || flags.contains(.maskControl) || flags.contains(.maskAlternate) {
-            let targetKeyCode = abcMapping[originalKeyCode] ?? originalKeyCode
-            postKeyEvent(keyCode: targetKeyCode, keyDown: (type == .keyDown))
-            return nil
-        }
-        
         // キーリピートが無効
         if type == .keyDown {
             if pressedKeys.contains(originalKeyCode) {
@@ -143,54 +131,6 @@ class KeyRemapper {
             }
         }
 
-        if mode == "en" {
-            // ABC配列のキーマッピングを取得（マッピングがない場合は元のキーコードを使用）
-            let targetKeyCode = abcMapping[originalKeyCode] ?? originalKeyCode
-            
-            // kana_on同時押しの処理（マッピング後のキーコードで判定）
-            if type == .keyDown {
-                if hjbuf == -1 {
-                    if kanaOnKeys.count >= 2 && (targetKeyCode == kanaOnKeys[0] || targetKeyCode == kanaOnKeys[1]) {
-                        hjbuf = originalKeyCode; // 元のキーコードを保存
-                        return nil;
-                    } else {
-                        // マッピングされたキーを送信
-                        postKeyEvent(keyCode: targetKeyCode, keyDown: true)
-                        return nil
-                    }
-                } else {
-                    let hjbufMapped = abcMapping[hjbuf] ?? hjbuf
-                    if hjbufMapped + targetKeyCode == kanaOnKeys[0] + kanaOnKeys[1] {
-                        sendJISKanaKey()
-                        hjbuf = -1
-                        return nil
-                    } else {
-                        // バッファのキーとマッピングされたキーを両方送信
-                        let hjbufTargetKeyCode = abcMapping[hjbuf] ?? hjbuf
-                        postKeyEvent(keyCode: hjbufTargetKeyCode, keyDown: true)
-                        postKeyEvent(keyCode: hjbufTargetKeyCode, keyDown: false)
-                        postKeyEvent(keyCode: targetKeyCode, keyDown: true)
-                        pressedKeys.remove(hjbuf)
-                        hjbuf = -1
-                        return nil
-                    }
-                }
-            } else if type == .keyUp {
-                if hjbuf > -1 && hjbuf == originalKeyCode {
-                    let hjbufTargetKeyCode = abcMapping[hjbuf] ?? hjbuf
-                    postKeyEvent(keyCode: hjbufTargetKeyCode, keyDown: true)
-                    postKeyEvent(keyCode: hjbufTargetKeyCode, keyDown: false)
-                    pressedKeys.remove(hjbuf)
-                    hjbuf = -1
-                    return nil
-                } else {
-                    // マッピングされたキーのキーアップを送信
-                    postKeyEvent(keyCode: targetKeyCode, keyDown: false)
-                    return nil
-                }
-            }
-        }
-
         if mode == "ja" {
             if ng.isNaginata(kc: originalKeyCode) {
                 if !allowRepeat && keyRepeat {
@@ -205,10 +145,6 @@ class KeyRemapper {
                     handleTargetKeys(targetKeys)
                     return nil
                 }
-            } else {
-                let targetKeyCode = abcMapping[originalKeyCode] ?? originalKeyCode
-                postKeyEvent(keyCode: targetKeyCode, keyDown: (type == .keyDown))
-                return nil
             }
         }
 
@@ -241,12 +177,6 @@ class KeyRemapper {
             keyEvent.setIntegerValueField(.eventSourceUserData, value: 1)
             keyEvent.post(tap: .cgSessionEventTap)
         }
-    }
-
-    private func sendJISKanaKey() {
-        ng.reset()
-        pressedKeys.removeAll()
-        tapKey(keyCode: kVK_JIS_Kana)
     }
 
     private var currentModifierFlags: CGEventFlags = []
@@ -335,12 +265,15 @@ class KeyRemapper {
                     postKeyEventWithFlags(keyCode: kVK_Shift, keyDown: false)
                     
                     tapKey(keyCode: kVK_JIS_Kana)
+                case "unmatch":
+                    break
                 default:
                     print("Unknown action: \(mode)")
                 }
             }
         }
     }
+    
     private func handleToggleShortcut(for keyCode: Int, flags: CGEventFlags, type: CGEventType) -> Bool {
         guard type == .keyDown else { return false }
         let usesShiftControl = flags.contains(.maskShift) && flags.contains(.maskControl)

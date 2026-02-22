@@ -5,8 +5,7 @@ class ConfigManager {
     
     private let configDirectory: URL
     private let naginataFileName = "Naginata.yaml"
-    private let abcFileName = "ABC.yaml"
-    
+
     private init() {
         // ~/Library/Containers/jp.eswai.Benkei2/Data/config ディレクトリのパスを設定
         configDirectory = FileManager.default.homeDirectoryForCurrentUser
@@ -51,18 +50,6 @@ class ConfigManager {
                 print("Failed to copy Naginata.yaml: \(error)")
             }
         }
-        
-        // ABC.yaml をコピー
-        if let bundleABCPath = Bundle.main.path(forResource: "ABC", ofType: "yaml") {
-            let configABCURL = configDirectory.appendingPathComponent(abcFileName)
-            
-            do {
-                try fileManager.copyItem(atPath: bundleABCPath, toPath: configABCURL.path)
-                print("Copied ABC.yaml to config directory")
-            } catch {
-                print("Failed to copy ABC.yaml: \(error)")
-            }
-        }
     }
     
     /// Naginata.yaml のパスを取得（設定ディレクトリから）
@@ -75,19 +62,6 @@ class ConfigManager {
             print("Naginata.yaml not found in config directory")
             // フォールバック：アプリバンドルから読み込み
             return Bundle.main.path(forResource: "Naginata", ofType: "yaml")
-        }
-    }
-    
-    /// ABC.yaml のパスを取得（設定ディレクトリから）
-    func getABCConfigPath() -> String? {
-        let configPath = configDirectory.appendingPathComponent(abcFileName).path
-        
-        if FileManager.default.fileExists(atPath: configPath) {
-            return configPath
-        } else {
-            print("ABC.yaml not found in config directory")
-            // フォールバック：アプリバンドルから読み込み
-            return Bundle.main.path(forResource: "ABC", ofType: "yaml")
         }
     }
     

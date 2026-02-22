@@ -128,7 +128,7 @@ class Naginata {
             let kl = mutableKeys.removeLast()
             return ngType(keys: mutableKeys) + ngType(keys: [kl])
         }
-        return []
+        return [["unmatch": "true"]]
     }
 
     func numberOfMatches(keys: [Int]) -> Int {
