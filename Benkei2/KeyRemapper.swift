@@ -20,11 +20,33 @@ class KeyRemapper {
     private var allowRepeat: Bool = false // キーリピートを許可するかどうか
 
     private init() {
-        // 設定ファイルを ~/Library/Containers/jp.eswai.Benkei2/Data/config から読み込み
-        guard let yamlPath = ConfigManager.shared.getNaginataConfigPath() else {
-            fatalError("Naginata.yaml not found")
+        // 設定ファイルを設定ディレクトリから読み込み。
+        // ユーザーが編集したYAMLが壊れていてもクラッシュせず、バンドル同梱のデフォルトへフォールバックする。
+        ng = KeyRemapper.loadNaginata()
+    }
+
+    private static func loadNaginata() -> Naginata {
+        if let yamlPath = ConfigManager.shared.getNaginataConfigPath(),
+           let naginata = Naginata(filePath: yamlPath) {
+            return naginata
         }
-        ng = Naginata(filePath: yamlPath)!
+
+        // ユーザー設定の読み込みに失敗した場合はバンドル同梱のデフォルト設定を使う
+        if let bundlePath = Bundle.main.path(forResource: "Naginata", ofType: "yaml"),
+           let naginata = Naginata(filePath: bundlePath) {
+            DispatchQueue.main.async { KeyRemapper.showConfigErrorAlert() }
+            return naginata
+        }
+
+        fatalError("Naginata.yaml not found")
+    }
+
+    private static func showConfigErrorAlert() {
+        let alert = NSAlert()
+        alert.messageText = "設定ファイルを読み込めませんでした"
+        alert.informativeText = "\(ConfigManager.shared.getConfigDirectoryPath()) の Naginata.yaml に問題があるため、デフォルト設定で起動しました。ファイルの内容を確認してください。"
+        alert.alertStyle = .warning
+        alert.runModal()
     }
 
     func setEnabled(_ enabled: Bool) {
@@ -47,7 +69,28 @@ class KeyRemapper {
             CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, .commonModes)
             CGEvent.tapEnable(tap: eventTap, enable: true)
         } else {
+            // アクセシビリティ権限がないとタップを作成できない。
+            // 権限ダイアログを表示し、付与されるまでポーリングして自動でリトライする。
             print("Failed to create event tap")
+            requestAccessibilityAndRetry()
+        }
+    }
+
+    private func requestAccessibilityAndRetry() {
+        let promptKey = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String
+        let trusted = AXIsProcessTrustedWithOptions([promptKey: true] as CFDictionary)
+        guard !trusted else {
+            start()
+            return
+        }
+        // 権限付与を待って再試行する
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            guard let self = self, self.eventTap == nil else { return }
+            if AXIsProcessTrusted() {
+                self.start()
+            } else {
+                self.requestAccessibilityAndRetry()
+            }
         }
     }
 
@@ -68,19 +111,29 @@ class KeyRemapper {
     ]
 
     private func getCurrentInputMode() -> String {
-        guard let inputSource = TISCopyCurrentKeyboardInputSource()?.takeUnretainedValue() else {
+        // TISCopyCurrentKeyboardInputSource は Create Rule のため takeRetainedValue で解放責任を引き受ける。
+        // takeUnretainedValue だとキー入力ごとにリークする。
+        guard let inputSource = TISCopyCurrentKeyboardInputSource()?.takeRetainedValue() else {
             return "en"
         }
         guard let sourceID = TISGetInputSourceProperty(inputSource, kTISPropertyInputModeID) else {
             return "en"
         }
         let sourceIDString = Unmanaged<CFString>.fromOpaque(sourceID).takeUnretainedValue() as String
-        
-        print("Current Input Source ID: \(sourceIDString)")
+
         return kanaMethods.contains(sourceIDString) ? "ja" : "en"
     }
 
     func handle(event: CGEvent, type: CGEventType) -> Unmanaged<CGEvent>? {
+        // コールバックがタイムアウト等でOSにタップを無効化された場合、再度有効化する。
+        // これをしないと一度無効化されたきり変換が黙って止まる。
+        if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
+            if let eventTap = eventTap {
+                CGEvent.tapEnable(tap: eventTap, enable: true)
+            }
+            return nil
+        }
+
         guard type == .keyDown || type == .keyUp else { return Unmanaged.passRetained(event) }
 
         if event.getIntegerValueField(.eventSourceUserData) == 1 {
@@ -95,6 +148,9 @@ class KeyRemapper {
             return nil
         }
 
+        // 無効時（サスペンド中）はすべて素通し。ここより上でトグルショートカットは処理済み。
+        guard isEnabled else { return Unmanaged.passRetained(event) }
+
         let mode = getCurrentInputMode()
 
         // 修飾キーが押されている場合は処理をスキップ
@@ -105,8 +161,6 @@ class KeyRemapper {
             }
             return Unmanaged.passRetained(event)
         }
-
-        guard isEnabled else { return Unmanaged.passRetained(event) }
 
         // kVK_ANSI_A to kVK_Escape
         guard originalKeyCode >= 0 && originalKeyCode <= 0x35 else {
@@ -127,7 +181,9 @@ class KeyRemapper {
             if pressedKeys.contains(originalKeyCode) {
                 pressedKeys.remove(originalKeyCode)
             } else {
-                return nil
+                // 押下を記録していないキーのkeyUpは握りつぶさず素通しする。
+                // （無効状態で押して有効化後に離した等でキーが押しっぱなしになるのを防ぐ）
+                return Unmanaged.passRetained(event)
             }
         }
 

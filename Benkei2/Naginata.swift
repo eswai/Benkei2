@@ -176,7 +176,6 @@ class Naginata {
             }
         }
 
-        print("NG num of matches \(noc)")
         return noc
     }
 
@@ -230,7 +229,6 @@ class Naginata {
             }
         }
 
-        print("NG num of candidates \(noc)")
         return noc
     }
 }
