@@ -7,16 +7,19 @@ class ConfigManager {
     private let naginataFileName = "Naginata.yaml"
 
     private init() {
-        // ~/Library/Containers/jp.eswai.Benkei2/Data/config ディレクトリのパスを設定
-        configDirectory = FileManager.default.homeDirectoryForCurrentUser
-             .appendingPathComponent("config")
+        // ~/Library/Application Support/Benkei2/config ディレクトリのパスを設定
+        let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+            ?? FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent("Library/Application Support")
+        configDirectory = appSupport
+            .appendingPathComponent("Benkei2")
+            .appendingPathComponent("config")
     }
     
     /// 設定ディレクトリの初期化（初回起動時）
     func initializeConfigDirectory() {
         let fileManager = FileManager.default
-        
-        // ~/Library/Containers/jp.eswai.Benkei2/Data/configディレクトリが存在するかチェック
+
+        // 設定ディレクトリが存在するかチェック
         if !fileManager.fileExists(atPath: configDirectory.path) {
             print("Config directory not found. Creating: \(configDirectory.path)")
             
@@ -35,7 +38,7 @@ class ConfigManager {
         }
     }
     
-    /// アプリバンドルから設定ファイルを ~/Library/Containers/jp.eswai.Benkei2/Data/configにコピー
+    /// アプリバンドルから設定ファイルを設定ディレクトリにコピー
     private func copyDefaultConfigFiles() {
         let fileManager = FileManager.default
         
