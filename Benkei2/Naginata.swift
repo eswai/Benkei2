@@ -134,6 +134,9 @@ class Naginata {
     func numberOfMatches(keys: [Int]) -> Int {
         guard keys.count > 0 else { return 0 }
 
+        // Enterはスペースと同じシフトキーとして辞書を引く
+        let keys = keys.map { $0 == kVK_Return ? kVK_Space : $0 }
+
         var noc = 0
 
         NGDIC.forEach { k in
@@ -181,6 +184,9 @@ class Naginata {
 
     func numberOfCandidates(keys: [Int]) -> Int {
         guard keys.count > 0 else { return 0 }
+
+        // Enterはスペースと同じシフトキーとして辞書を引く
+        let keys = keys.map { $0 == kVK_Return ? kVK_Space : $0 }
 
         var noc = 0
 
