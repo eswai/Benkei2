@@ -4,6 +4,7 @@ import AppKit
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem!
     private var toggleMenuItem: NSMenuItem?
+    private var sandsMenuItem: NSMenuItem?
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
@@ -26,6 +27,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         KeyRemapper.shared.toggleEnabled()
         refreshRemapperUI()
     }
+
+    @objc func toggleSandS() {
+        KeyRemapper.shared.toggleSandS()
+        refreshRemapperUI()
+    }
     
     func updateStatusBarIcon() {
         if let button = statusItem.button {
@@ -41,6 +47,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         toggleItem.target = self
         toggleMenuItem = toggleItem
         menu.addItem(toggleItem)
+        let sandsItem = NSMenuItem(title: "SandS", action: #selector(toggleSandS), keyEquivalent: "")
+        sandsItem.target = self
+        sandsItem.state = KeyRemapper.shared.isSandSEnabled ? .on : .off
+        sandsMenuItem = sandsItem
+        menu.addItem(sandsItem)
         menu.addItem(NSMenuItem.separator())
         let quitItem = NSMenuItem(title: "終了", action: #selector(terminate), keyEquivalent: "q")
         quitItem.target = self
@@ -54,6 +65,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func refreshRemapperUI() {
         toggleMenuItem?.title = currentRemapperTitle()
+        sandsMenuItem?.state = KeyRemapper.shared.isSandSEnabled ? .on : .off
         updateStatusBarIcon()
     }
 

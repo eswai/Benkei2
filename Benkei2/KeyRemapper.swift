@@ -14,15 +14,30 @@ class KeyRemapper {
             }
         }
     }
+    static let sandsEnabledDefaultsKey = "sandsEnabled"
+    private(set) var isSandSEnabled: Bool = true {
+        didSet {
+            if oldValue != isSandSEnabled {
+                UserDefaults.standard.set(isSandSEnabled, forKey: KeyRemapper.sandsEnabledDefaultsKey)
+                NotificationCenter.default.post(name: KeyRemapper.statusChangedNotification, object: nil)
+            }
+        }
+    }
     private var ng: Naginata
     private var pressedKeys: Set<Int> = []
     private var keyRepeat = false
     private var allowRepeat: Bool = false // キーリピートを許可するかどうか
+    private var sandsSpaceHeld = false // SandS: スペースを物理的に押下中か
+    private var sandsSpaceUsedAsModifier = false // SandS: 押下中に他キーをシフト送出したか
 
     private init() {
         // 設定ファイルを設定ディレクトリから読み込み。
         // ユーザーが編集したYAMLが壊れていてもクラッシュせず、バンドル同梱のデフォルトへフォールバックする。
         ng = KeyRemapper.loadNaginata()
+        // 未設定（初回起動）時はオンをデフォルトとする
+        if UserDefaults.standard.object(forKey: KeyRemapper.sandsEnabledDefaultsKey) != nil {
+            isSandSEnabled = UserDefaults.standard.bool(forKey: KeyRemapper.sandsEnabledDefaultsKey)
+        }
     }
 
     private static func loadNaginata() -> Naginata {
@@ -52,10 +67,30 @@ class KeyRemapper {
     func setEnabled(_ enabled: Bool) {
         guard isEnabled != enabled else { return }
         isEnabled = enabled
+        if !enabled {
+            resetSandSState()
+        }
     }
 
     func toggleEnabled() {
         setEnabled(!isEnabled)
+    }
+
+    func setSandSEnabled(_ enabled: Bool) {
+        guard isSandSEnabled != enabled else { return }
+        isSandSEnabled = enabled
+        if !enabled {
+            resetSandSState()
+        }
+    }
+
+    func toggleSandS() {
+        setSandSEnabled(!isSandSEnabled)
+    }
+
+    private func resetSandSState() {
+        sandsSpaceHeld = false
+        sandsSpaceUsedAsModifier = false
     }
 
     func start() {
@@ -153,6 +188,24 @@ class KeyRemapper {
 
         let mode = getCurrentInputMode()
 
+        // SandS: 英字モードではスペースをShiftキーと兼用する。
+        // 修飾キー素通し判定より前に置くことで、スペース押下中のcmd+C等にもShiftを足せる。
+        if isSandSEnabled {
+            if mode != "en" {
+                // スペース押下中に日本語モードへ切り替わった場合は状態だけ破棄する
+                resetSandSState()
+            } else {
+                switch handleSandS(event: event, type: type, keyCode: originalKeyCode, flags: flags) {
+                case .suppress:
+                    return nil
+                case .passModified:
+                    return Unmanaged.passRetained(event)
+                case .notHandled:
+                    break
+                }
+            }
+        }
+
         // 修飾キーが押されている場合は処理をスキップ
         if flags.contains(.maskCommand) || flags.contains(.maskShift) || flags.contains(.maskControl) || flags.contains(.maskAlternate) {
             if mode == "ja" {
@@ -205,6 +258,52 @@ class KeyRemapper {
         }
 
         return Unmanaged.passRetained(event)
+    }
+
+    private enum SandSResult {
+        case suppress // イベントを握りつぶす
+        case passModified // flagsを書き換えたイベントをそのまま流す
+        case notHandled // SandSの対象外。通常フローへ
+    }
+
+    // 英字モードのSandS判定。スペース押下中は全キーにShiftを付与し、
+    // 他キーを押さずに離した場合のみリリース時点でスペースを送出する（タイマー判定なし）。
+    private func handleSandS(event: CGEvent, type: CGEventType, keyCode: Int, flags: CGEventFlags) -> SandSResult {
+        let physicalModifiers: CGEventFlags = [.maskCommand, .maskShift, .maskControl, .maskAlternate]
+
+        if keyCode == kVK_Space {
+            if type == .keyDown {
+                // スペース自体のキーリピートは無視
+                if sandsSpaceHeld { return .suppress }
+                // cmd+space（Spotlight）など物理修飾キー併用時は発動しない
+                if !flags.intersection(physicalModifiers).isEmpty { return .notHandled }
+                sandsSpaceHeld = true
+                sandsSpaceUsedAsModifier = false
+                return .suppress
+            } else {
+                // SandSとして押下を記録していないkeyUpは素通し（機能オン前から押されていた等）
+                guard sandsSpaceHeld else { return .notHandled }
+                sandsSpaceHeld = false
+                let usedAsModifier = sandsSpaceUsedAsModifier
+                sandsSpaceUsedAsModifier = false
+                if !usedAsModifier {
+                    postKeyEventWithFlags(keyCode: kVK_Space, keyDown: true, flags: [])
+                    postKeyEventWithFlags(keyCode: kVK_Space, keyDown: false, flags: [])
+                }
+                return .suppress
+            }
+        }
+
+        if sandsSpaceHeld {
+            if type == .keyDown {
+                sandsSpaceUsedAsModifier = true
+            }
+            // keyUpにもShiftを付与する（物理Shiftと同じ挙動）。
+            // スペースリリース後に来るkeyUpは.notHandledで素通しになるが、文字はkeyDownで確定済みなので問題ない。
+            event.flags = flags.union(.maskShift)
+            return .passModified
+        }
+        return .notHandled
     }
 
     private func tapKey(keyCode: Int) {
