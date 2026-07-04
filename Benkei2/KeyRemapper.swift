@@ -19,6 +19,10 @@ class KeyRemapper {
     private var keyRepeat = false
     private var allowRepeat: Bool = false // キーリピートを許可するかどうか
 
+    // 英字モードで同時押しするとかなモードへ切り替えるキー（HJ）
+    private let kanaOnKeys: [Int] = [kVK_ANSI_H, kVK_ANSI_J]
+    private var hjbuf: Int = -1 // かなオン同時押し判定用のバッファ
+
     private init() {
         // 設定ファイルを設定ディレクトリから読み込み。
         // ユーザーが編集したYAMLが壊れていてもクラッシュせず、バンドル同梱のデフォルトへフォールバックする。
@@ -187,6 +191,42 @@ class KeyRemapper {
             }
         }
 
+        // 英字モードでHJ同時押しするとかなモードへ切り替える。
+        // 片方が押されたら送出を保留し、続けてもう片方が押されたらJIS_Kanaを送る。
+        if mode == "en" {
+            if type == .keyDown {
+                if hjbuf == -1 {
+                    if kanaOnKeys.contains(originalKeyCode) {
+                        hjbuf = originalKeyCode
+                        return nil
+                    }
+                } else {
+                    if hjbuf + originalKeyCode == kanaOnKeys[0] + kanaOnKeys[1] {
+                        // HJ同時押し成立。かなモードへ切り替える
+                        sendJISKanaKey()
+                        hjbuf = -1
+                        return nil
+                    } else {
+                        // 同時押し不成立。保留したキーを送出し、今回のキーは素通しする
+                        postKeyEvent(keyCode: hjbuf, keyDown: true)
+                        postKeyEvent(keyCode: hjbuf, keyDown: false)
+                        pressedKeys.remove(hjbuf)
+                        hjbuf = -1
+                        return Unmanaged.passRetained(event)
+                    }
+                }
+            } else if type == .keyUp {
+                if hjbuf > -1 && hjbuf == originalKeyCode {
+                    // 保留中のキーが単独で離された。通常のキー入力として送出する
+                    postKeyEvent(keyCode: hjbuf, keyDown: true)
+                    postKeyEvent(keyCode: hjbuf, keyDown: false)
+                    pressedKeys.remove(hjbuf)
+                    hjbuf = -1
+                    return nil
+                }
+            }
+        }
+
         if mode == "ja" {
             if ng.isNaginata(kc: originalKeyCode) {
                 if !allowRepeat && keyRepeat {
@@ -210,6 +250,12 @@ class KeyRemapper {
     private func tapKey(keyCode: Int) {
         postKeyEvent(keyCode: keyCode, keyDown: true)
         postKeyEvent(keyCode: keyCode, keyDown: false)
+    }
+
+    private func sendJISKanaKey() {
+        ng.reset()
+        pressedKeys.removeAll()
+        tapKey(keyCode: kVK_JIS_Kana)
     }
 
     private func postKeyEvent(keyCode: Int, keyDown: Bool) {
