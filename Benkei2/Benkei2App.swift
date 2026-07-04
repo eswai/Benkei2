@@ -43,8 +43,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     private func configureStatusMenu() {
         let menu = NSMenu()
-        let toggleItem = NSMenuItem(title: currentRemapperTitle(), action: #selector(toggleEnabled), keyEquivalent: "")
+        let toggleItem = NSMenuItem(title: "薙刀式かな入力", action: #selector(toggleEnabled), keyEquivalent: "")
         toggleItem.target = self
+        toggleItem.state = KeyRemapper.shared.isEnabled ? .on : .off
         toggleMenuItem = toggleItem
         menu.addItem(toggleItem)
         let sandsItem = NSMenuItem(title: "SandS", action: #selector(toggleSandS), keyEquivalent: "")
@@ -59,12 +60,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem.menu = menu
     }
 
-    private func currentRemapperTitle() -> String {
-        return KeyRemapper.shared.isEnabled ? "変換有効" : "変換オフ"
-    }
-
     private func refreshRemapperUI() {
-        toggleMenuItem?.title = currentRemapperTitle()
+        toggleMenuItem?.state = KeyRemapper.shared.isEnabled ? .on : .off
         sandsMenuItem?.state = KeyRemapper.shared.isSandSEnabled ? .on : .off
         updateStatusBarIcon()
     }
