@@ -108,12 +108,6 @@ class KeyRemapper {
         }
     }
 
-    let kanaMethods = [
-        "com.apple.inputmethod.Japanese",
-        "com.apple.inputmethod.Japanese.Katakana",
-        "com.apple.inputmethod.Japanese.HalfWidthKana"
-    ]
-
     private func getCurrentInputMode() -> String {
         // TISCopyCurrentKeyboardInputSource は Create Rule のため takeRetainedValue で解放責任を引き受ける。
         // takeUnretainedValue だとキー入力ごとにリークする。
@@ -125,7 +119,13 @@ class KeyRemapper {
         }
         let sourceIDString = Unmanaged<CFString>.fromOpaque(sourceID).takeUnretainedValue() as String
 
-        return kanaMethods.contains(sourceIDString) ? "ja" : "en"
+        // 各IMEのモードIDは実装依存（例: com.apple.inputmethod.Japanese,
+        // dev.seimei.inputmethod.SeimeiIME.Japanese, net.mtgto.inputmethod.macSKK.hiragana）なので、
+        // 完全一致リストではなく "japanese"/"hiragana" を含むかで緩く判定する。
+        let lowered = sourceIDString.lowercased()
+        let isKana = lowered.contains("japanese") || lowered.contains("hiragana")
+
+        return isKana ? "ja" : "en"
     }
 
     func handle(event: CGEvent, type: CGEventType) -> Unmanaged<CGEvent>? {
