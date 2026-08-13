@@ -24,33 +24,28 @@ class KeyRemapper {
     private var hjbuf: Int = -1 // かなオン同時押し判定用のバッファ
 
     private init() {
-        // 設定ファイルを設定ディレクトリから読み込み。
-        // ユーザーが編集したYAMLが壊れていてもクラッシュせず、バンドル同梱のデフォルトへフォールバックする。
+        // かな変換設定はアプリバンドル同梱の Naginata.yaml のみを使う。
         ng = KeyRemapper.loadNaginata()
     }
 
     private static func loadNaginata() -> Naginata {
-        if let yamlPath = ConfigManager.shared.getNaginataConfigPath(),
-           let naginata = Naginata(filePath: yamlPath) {
-            return naginata
-        }
-
-        // ユーザー設定の読み込みに失敗した場合はバンドル同梱のデフォルト設定を使う
         if let bundlePath = Bundle.main.path(forResource: "Naginata", ofType: "yaml"),
            let naginata = Naginata(filePath: bundlePath) {
-            DispatchQueue.main.async { KeyRemapper.showConfigErrorAlert() }
             return naginata
         }
 
-        fatalError("Naginata.yaml not found")
+        // 同梱の設定が読めない = ビルド不良。クラッシュさせず理由を伝えて終了する。
+        DispatchQueue.main.async { KeyRemapper.showConfigErrorAlert() }
+        return Naginata()
     }
 
     private static func showConfigErrorAlert() {
         let alert = NSAlert()
         alert.messageText = "設定ファイルを読み込めませんでした"
-        alert.informativeText = "\(ConfigManager.shared.getConfigDirectoryPath()) の Naginata.yaml に問題があるため、デフォルト設定で起動しました。ファイルの内容を確認してください。"
-        alert.alertStyle = .warning
+        alert.informativeText = "アプリケーションに同梱された Naginata.yaml が読み込めません。アプリを再ダウンロードしてください。"
+        alert.alertStyle = .critical
         alert.runModal()
+        NSApp.terminate(nil)
     }
 
     func setEnabled(_ enabled: Bool) {

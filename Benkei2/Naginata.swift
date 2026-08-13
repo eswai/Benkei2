@@ -20,6 +20,11 @@ class Naginata {
     var pressedKeys: Set<Int> = []
     var nginput: [[Int]] = []  // 未変換のキー [[:NG_M], [:NG_J, :NG_W]] (なぎ)のように、同時押しの組み合わせを2次元配列へ格納
 
+    /// 変換辞書が空の状態。設定が一切読めなかったときの縮退用（かな変換は行われない）。
+    init() {
+        self.NGDIC = []
+    }
+
     init?(filePath: String) {
         guard let commands = NaginataReader.readNaginataFile(path: filePath) else {
             print("Failed to read Naginata configuration file")

@@ -7,10 +7,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
-        
-        // 設定ディレクトリを初期化（初回起動時に ~/Library/Containers/jp.eswai.Benkei2/Data/config を作成し、設定ファイルをコピー）
-        ConfigManager.shared.initializeConfigDirectory()
-        
+
         NotificationCenter.default.addObserver(self, selector: #selector(remapperStatusChanged(_:)), name: KeyRemapper.statusChangedNotification, object: nil)
 
         // Status bar icon initialization
