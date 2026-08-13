@@ -228,12 +228,16 @@ class KeyRemapper {
                         hjbuf = -1
                         return nil
                     } else {
-                        // 同時押し不成立。保留したキーを送出し、今回のキーは素通しする
+                        // 同時押し不成立。保留したキーを送出する。
+                        // 今回のキーを素通しすると戻り値が先に下流へ渡り、後から届く
+                        // 保留キーに追い越されて順序が逆転する（hu → uh）ため、
+                        // 今回のキーも同じ経路で送出して順序を保つ。
                         postKeyEvent(keyCode: hjbuf, keyDown: true)
                         postKeyEvent(keyCode: hjbuf, keyDown: false)
                         pressedKeys.remove(hjbuf)
                         hjbuf = -1
-                        return Unmanaged.passRetained(event)
+                        postKeyEvent(keyCode: originalKeyCode, keyDown: true)
+                        return nil
                     }
                 }
             } else if type == .keyUp {
