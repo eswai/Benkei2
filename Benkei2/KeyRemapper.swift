@@ -22,6 +22,7 @@ class KeyRemapper {
     // 英字モードで同時押しするとかなモードへ切り替えるキー（HJ）
     private let kanaOnKeys: [Int] = [kVK_ANSI_H, kVK_ANSI_J]
     private var hjbuf: Int = -1 // かなオン同時押し判定用のバッファ
+    private var lastMode: String = "" // 前回のイベント時の日英モード
 
     private init() {
         // かな変換設定はアプリバンドル同梱の Naginata.yaml のみを使う。
@@ -50,7 +51,16 @@ class KeyRemapper {
 
     func setEnabled(_ enabled: Bool) {
         guard isEnabled != enabled else { return }
+        // 無効中のkeyUpは処理されないので、遷移のたびに押下状態を捨てる
+        resetAllState()
         isEnabled = enabled
+    }
+
+    /// 押下状態と未変換バッファをすべて捨てる。修飾キーのラッチには触らない。
+    private func resetAllState() {
+        ng.reset()
+        pressedKeys.removeAll()
+        hjbuf = -1
     }
 
     func toggleEnabled() {
@@ -130,6 +140,8 @@ class KeyRemapper {
             if let eventTap = eventTap {
                 CGEvent.tapEnable(tap: eventTap, enable: true)
             }
+            // 無効化されていた間のkeyUpは確実に落ちているので、押下状態を捨てる
+            resetAllState()
             return nil
         }
 
@@ -152,8 +164,18 @@ class KeyRemapper {
 
         let mode = getCurrentInputMode()
 
+        // 打鍵の途中で日英モードが切り替わると、押下中のキーのkeyUpは
+        // もう一方のモードの経路へ流れて処理されない。押下状態を捨てる。
+        if mode != lastMode {
+            lastMode = mode
+            resetAllState()
+        }
+
         // 修飾キーが押されている場合は処理をスキップ
         if flags.contains(.maskCommand) || flags.contains(.maskShift) || flags.contains(.maskControl) || flags.contains(.maskAlternate) {
+            // このkeyUpはここで素通しされ、なぎなたの押下状態が残り続ける
+            // （Fを押したままShiftを押してFを離す等）。取りこぼす前に捨てる。
+            resetAllState()
             if mode == "ja" {
                 postKeyEvent(keyCode: originalKeyCode, keyDown: (type == .keyDown))
                 return nil
@@ -182,6 +204,10 @@ class KeyRemapper {
             } else {
                 // 押下を記録していないキーのkeyUpは握りつぶさず素通しする。
                 // （無効状態で押して有効化後に離した等でキーが押しっぱなしになるのを防ぐ）
+                // 双方の押下状態がずれている場合はここで捨てて次の入力に持ち越さない。
+                if ng.pressedKeys.contains(originalKeyCode) {
+                    resetAllState()
+                }
                 return Unmanaged.passRetained(event)
             }
         }
@@ -248,8 +274,7 @@ class KeyRemapper {
     }
 
     private func sendJISKanaKey() {
-        ng.reset()
-        pressedKeys.removeAll()
+        resetAllState()
         tapKey(keyCode: kVK_JIS_Kana)
     }
 
@@ -341,8 +366,7 @@ class KeyRemapper {
                         allowRepeat = false
                     }
                 case "reset":
-                    ng.reset()
-                    pressedKeys.removeAll()
+                    resetAllState()
                     currentModifierFlags = []
                 case "character":
                     // 未変換を確定
